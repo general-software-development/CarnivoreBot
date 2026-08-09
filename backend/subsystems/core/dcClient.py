@@ -35,9 +35,16 @@ async def on_ready():
     logger.success(f"Started bot: {client.user.name} (#{client.user.id})")
 
 async def on_message(message: discord.Message):
+    success = False
+
     for listener in listeners['onMessage']:
         with LogErrors('dcClient:on_message'):
-            await listener(message)
+            if await listener(message):
+                success = True
+
+    if success == False:
+        ...
+        # logger.debug(f"Skipped over command in message: '{message.content}'. Cause: no handler installed")
 
 def registerCommand(cmd: str, handler: Callable[[discord.Message], Coroutine], includePrefix: bool = True):
     logger.debug(f"Registered command: '{cmd}'. Prefix: {'enabled' if includePrefix else 'disabled'}")
@@ -46,15 +53,16 @@ def registerCommand(cmd: str, handler: Callable[[discord.Message], Coroutine], i
         prefix = AssetManager.settings['Discord']['Command']['Prefix'] if includePrefix else ''
         
         if not message.content.startswith(prefix):
-            return
+            return False
         
         if not message.content.startswith(f"{prefix}{cmd}"):
-            logger.warning(f"Ignoring command: '{message.content}'. Cause: No handler installed.")
-            return
+            return False
         
-        logger.debug(f"Command {prefix}{cmd} was called: '{message.content}'")
+        logger.info(f"Command {prefix}{cmd} was called: '{message.content}'")
 
         await handler(message)
+
+        return True
         
     listeners['onMessage'].append(wrapper)
 

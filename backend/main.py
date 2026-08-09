@@ -2,6 +2,7 @@ from subsystems.core import rateLimitManager
 
 from subsystems.feat import pingPong
 from subsystems.feat import checkIsSpam
+from subsystems.feat import getEnv
 
 from subsystems.core.dcClient import startClient
 from subsystems.core.assetManager import AssetManager
@@ -21,6 +22,7 @@ async def main():
 
     pingPong.InitialisePingPongCommand()
     checkIsSpam.InitialiseCheckIsSpamCommand()
+    getEnv.InitialiseGetEnvCommand()
 
     await startClient(bot, AssetManager.settings['Discord']['App']['Auth']['AuthToken'])
     await asyncio.Event().wait()

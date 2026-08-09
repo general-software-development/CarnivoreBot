@@ -1,5 +1,6 @@
 from .dependencies import *
 from . import logManager
+import types
 
 logger = logManager.getLogger("assetManager")
 
@@ -29,3 +30,21 @@ class AssetManager:
         except Exception as e:
             logger.critical('Failed to load settings.')
             logger.critical(e, exc_info=True, stack_info=True, stacklevel=3)
+
+    @cached_property
+    def config(self):
+        logger.debug('Dereferencing config')
+        settings = self.settings
+
+        def to_cfg(sett: dict[str, Any]) -> types.SimpleNamespace:
+            cfg = types.SimpleNamespace()
+            for key, value in sett.items():
+                if isinstance(value, dict):
+                    setattr(cfg, key, to_cfg(value))
+                else:
+                    setattr(cfg, key, value)
+            return cfg
+
+        cfg = to_cfg(settings)
+
+        return cfg

@@ -56,7 +56,7 @@ async def newThread():
     logger = getLogger("rateLimitManager")
 
     while True:
-        time.sleep(25)
+        time.sleep(45)
 
         with ratelimit_commands_lock:
             for name in ratelimit_commands:

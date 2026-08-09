@@ -9,6 +9,10 @@ dependencies = [
     "discord-py>=2.7.1",
     "flask[async]>=3.1.3",
     "huggingface-hub>=1.27.0",
+    "psutil>=7.2.2",
     "torch>=2.13.0",
     "transformers>=5.14.1",
 ]
+
+[tool.uv]
+compile-bytecode = true

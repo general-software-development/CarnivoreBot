@@ -9,6 +9,5 @@ AuthToken = "."
 [Discord.Command]
 Prefix = ";"
 
-[Local.Backend]
-Base = "http://localhost:<port>"
-Port = PORT_GOES_HERE
+[Bot.Command.getEnv]
+AuthedUsers = [808381764623532102]

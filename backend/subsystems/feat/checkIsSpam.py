@@ -3,6 +3,7 @@ import importlib
 import shutil
 import pathlib
 from ..core.logManager import getLogger
+from ..core import runtimeDataManager as RDM
 from html import unescape
 
 os.environ["HF_HUB_DISABLE_SYMLINKS_WARNING"] = '1'
@@ -25,13 +26,12 @@ def attempt_import(module_name):
     except ImportError as e:
         logger.error(e)
 
-MODEL = None
-tokenizer = None
+async def load_model():
+    RDM.configSubsystem("feat:checkIsSpam:downloaded", maxSize = 4194304)
 
-def load_model():
-    global MODEL, tokenizer
-    if MODEL is not None and tokenizer is not None:
-        return MODEL, tokenizer
+    if ai := await RDM.readData("feat:checkIsSpam:downloaded", "classifier"):
+        if tkn := await RDM.readData("feat:checkIsSpam:downloaded", "tokenizer"):
+            return ai, tkn
 
     logger = getLogger("checkIsSpam")
     logger.info(f"Downloading model: {model_name}")
@@ -48,7 +48,9 @@ def load_model():
     # as well as the model
     utils_path = hf_hub_download(
         repo_id=model_name,
-        filename="utils.py"
+        filename="utils.py",
+        local_dir=".",
+        local_dir_use_symlinks=False,
     )
     shutil.move(utils_path, os.path.abspath(pathlib.Path(__file__).parent / "temp_utils.py"))
     _utils = importlib.import_module(".temp_utils", package="subsystems.feat")
@@ -77,6 +79,9 @@ def load_model():
         logger.info(f"Running model on the GPU in float16.")
         MODEL = MODEL.to(dtype=torch.float16)
 
+    await RDM.writeData("feat:checkIsSpam:downloaded", "classifier", MODEL)
+    await RDM.writeData("feat:checkIsSpam:downloaded", "tokenizer", tokenizer)
+
     logger.success(f"Downloaded and loaded model {model_name}")
 
     return MODEL, tokenizer
@@ -86,6 +91,7 @@ from ..core import dcClient
 from ..core import rateLimitManager
 from ..core.featManager import detachAsync, queuedFunctionAsync, start_feat
 import discord
+import asyncio
 
 class CheckIsSpamCommand(CommandABC):
     def __init__(self):
@@ -97,7 +103,7 @@ class CheckIsSpamCommand(CommandABC):
 
     @queuedFunctionAsync()
     async def onRunCommand(self, message: discord.Message):
-        model, tokenizer = load_model()
+        model, tokenizer = await asyncio.to_thread(lambda: asyncio.run(load_model()))
         text = unescape(message.content)
         inputs = tokenizer(text, return_tensors="pt", truncation=True, padding="max_length", max_length=512)["input_ids"].to(get_device())
         with torch.no_grad():
@@ -105,13 +111,13 @@ class CheckIsSpamCommand(CommandABC):
             probs = torch.softmax(outputs, dim=-1)
             spam_score = probs[0][1].item()  # assuming label 1 = spam
 
-        isSpam = spam_score >= 0.5
+        isSpam = spam_score >= 0.00125
 
         if isSpam:
-            await dcClient.runDiscord(message.reply("SPAM"))
+            await dcClient.runDiscord(message.reply(f"SPAM (score={round(spam_score * 100, 2)}%)"))
         else:
-            await dcClient.runDiscord(message.reply("NOT SPAM"))
+            await dcClient.runDiscord(message.reply(f"NOT SPAM (score={round(spam_score * 100, 2)}%)"))
 
 def InitialiseCheckIsSpamCommand():
-    start_feat("PingPong", CheckIsSpamCommand)
+    start_feat("CheckIsSpam", CheckIsSpamCommand)
             
