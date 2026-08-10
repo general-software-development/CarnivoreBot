@@ -51,7 +51,6 @@ async def load_model():
         repo_id=model_name,
         filename="utils.py",
         local_dir=".",
-        local_dir_use_symlinks=False,
     )
     shutil.move(utils_path, os.path.abspath(pathlib.Path(__file__).parent / "temp_utils.py"))
     _utils = importlib.import_module(".temp_utils", package="subsystems.feat")

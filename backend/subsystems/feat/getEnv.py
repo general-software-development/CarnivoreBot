@@ -28,11 +28,11 @@ class GetEnvCommand(CommandABC):
         detachAsync(self.onRunCommand.runForever())
 
     @queuedFunctionAsync()
-    async def onRunCommand(self, message, *args):
+    async def onRunCommand(self, message, cmd):
         if message.author.id not in self.authedUsers:
             await dcClient.runDiscord(message.reply("No Access."))
 
-        if "!gc-clean" not in message.content.split(" "):
+        if "!gc-clean" not in cmd:
             gc.collect()
             self.logger.success("Performed manual garbage collection")
 
@@ -41,7 +41,7 @@ class GetEnvCommand(CommandABC):
         def format_thread_1(thread: threading.Thread):
             return f" - Thread-Name: {thread.name!r}\n   Ident: {thread.ident}\n   Thread-ID: {thread.native_id}\n" if thread.is_alive() else ""
 
-        await dcClient.runDiscord(message.reply(f"""
+        text = f"""
 ```yaml
 Python-Version: {sys.version!r}
 
@@ -49,9 +49,8 @@ Total-Resident-Memory-Used: "{size.toHumanReadable(mem_info.rss)}"
 Total-Virtual-Memory-Used: "{size.toHumanReadable(mem_info.vms)}"
 Total-Resident-VRAM-Used: "{size.toHumanReadable(torch.cuda.memory_allocated()) if torch.cuda.is_available() else "-1B"}"
 Total-Virtual-VRAM-Used: "{size.toHumanReadable(torch.cuda.memory_reserved()) if torch.cuda.is_available() else "-1B"}"
-
-Threads:
-{''.join([format_thread_1(t) for t in threading.enumerate()])}
+\
+{("\nThreads: \n" + ''.join([format_thread_1(t) for t in threading.enumerate()]) + "\n") if "!thread" not in cmd else ""}\
 
 GC-No-Tracked-Objects:
  - Total: {len(gc.get_objects()):,}
@@ -59,7 +58,9 @@ GC-No-Tracked-Objects:
  - Generation-1: {len(gc.get_objects(1)):,}
  - Generation-2: {len(gc.get_objects(2)):,}
 ```
-""".strip()))
+"""
+
+        await dcClient.runDiscord(message.reply(text))
 
 def InitialiseGetEnvCommand():
     start_feat("GetEnv", GetEnvCommand)

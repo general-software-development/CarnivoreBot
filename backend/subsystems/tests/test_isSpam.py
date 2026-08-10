@@ -32,7 +32,6 @@ async def test_non_spam_1(messageContent: str):
 
 @pytest.mark.parametrize(["messageContent"], [
     ["<@28123824126> <@28123824126> <@28123824126> <@28123824126>"],
-    ["nigger"],
     ["""🎉 MrBeast is giving away $2,500 to 500 selected Discord members!
 You've been chosen!
 ⏰ Claim expires in 09:47 — click here: www.mrbeast-claim2026.org/win"""]

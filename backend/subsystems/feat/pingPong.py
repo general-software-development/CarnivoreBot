@@ -20,6 +20,9 @@ class PingPongCommand:
 
     @queuedFunctionAsync()
     async def onRunCommand(self, message: Message, *args) -> None:
+        return await self._onRunCommand(message)
+
+    async def _onRunCommand(self, message: Message) -> None:
         userId = message.author.id
 
         await rateLimitManager.refreshRateLimits("ping")
