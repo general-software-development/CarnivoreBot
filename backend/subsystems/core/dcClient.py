@@ -5,6 +5,8 @@ from .assetManager import AssetManager
 from typing import Callable, Coroutine, Literal
 import asyncio as aio
 from collections.abc import Coroutine
+import shlex
+from .mainThread import mainLoop
 
 logger = getLogger("dcClient")
 
@@ -14,7 +16,7 @@ listeners = {
     'onMessage': []
 }
 
-discordLoop: aio.EventLoop = None
+discordLoop: aio.EventLoop = mainLoop
 
 async def startClient(cl: discord.Client, token: str):
     global client
@@ -22,9 +24,6 @@ async def startClient(cl: discord.Client, token: str):
 
     client.event(on_ready)
     client.event(on_message)
-
-    global discordLoop
-    discordLoop = aio.get_event_loop()
     
     with LogErrors('dcClient', True):
         logger.debug("Starting bot...")
@@ -44,7 +43,12 @@ async def on_message(message: discord.Message):
 
     if success == False:
         ...
-        # logger.debug(f"Skipped over command in message: '{message.content}'. Cause: no handler installed")
+
+def shlexSplit(msg: str) -> list[str]:
+    try:
+        return shlex.split(msg, False, True)
+    except:
+        return msg.split(" ")
 
 def registerCommand(cmd: str, handler: Callable[[discord.Message], Coroutine], includePrefix: bool = True):
     logger.debug(f"Registered command: '{cmd}'. Prefix: {'enabled' if includePrefix else 'disabled'}")
@@ -60,7 +64,7 @@ def registerCommand(cmd: str, handler: Callable[[discord.Message], Coroutine], i
         
         logger.info(f"Command {prefix}{cmd} was called: '{message.content}'")
 
-        await handler(message)
+        await handler(message, shlexSplit(message.content))
 
         return True
         

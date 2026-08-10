@@ -4,6 +4,7 @@ import shutil
 import pathlib
 from ..core.logManager import getLogger
 from ..core import runtimeDataManager as RDM
+from typing import Iterable
 from html import unescape
 
 os.environ["HF_HUB_DISABLE_SYMLINKS_WARNING"] = '1'
@@ -102,21 +103,25 @@ class CheckIsSpamCommand(CommandABC):
         detachAsync(self.onRunCommand.runForever())
 
     @queuedFunctionAsync()
-    async def onRunCommand(self, message: discord.Message):
+    async def onRunCommand(self, message, cmd):
+        return await self._onRunCommand(message, cmd)
+
+    async def _onRunCommand(self, message: discord.Message, cmd: Iterable[str]):
         model, tokenizer = await asyncio.to_thread(lambda: asyncio.run(load_model()))
-        text = unescape(message.content)
-        inputs = tokenizer(text, return_tensors="pt", truncation=True, padding="max_length", max_length=512)["input_ids"].to(get_device())
+        text = message.content.removeprefix(";is_spam")
+        inputs = tokenizer(text, return_tensors="pt", truncation=True, padding=False, max_length=512)["input_ids"].to(get_device())
         with torch.no_grad():
             outputs = model(inputs)
             probs = torch.softmax(outputs, dim=-1)
-            spam_score = probs[0][1].item()  # assuming label 1 = spam
+            notspam_score = probs[0][1].item()  # assuming label 0 = spam
+            spam_score = probs[0][0].item()
 
-        isSpam = spam_score >= 0.00125
+        isSpam = spam_score >= 0.03
 
         if isSpam:
-            await dcClient.runDiscord(message.reply(f"SPAM (score={round(spam_score * 100, 2)}%)"))
+            await dcClient.runDiscord(message.reply(f"SPAM (score={round(spam_score * 100, 2)}% notscore={round(notspam_score * 100, 2)}%)"))
         else:
-            await dcClient.runDiscord(message.reply(f"NOT SPAM (score={round(spam_score * 100, 2)}%)"))
+            await dcClient.runDiscord(message.reply(f"NOT SPAM (score={round(spam_score * 100, 2)}% notscore={round(notspam_score * 100, 2)}%)"))
 
 def InitialiseCheckIsSpamCommand():
     start_feat("CheckIsSpam", CheckIsSpamCommand)

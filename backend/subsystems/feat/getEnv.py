@@ -28,7 +28,7 @@ class GetEnvCommand(CommandABC):
         detachAsync(self.onRunCommand.runForever())
 
     @queuedFunctionAsync()
-    async def onRunCommand(self, message):
+    async def onRunCommand(self, message, *args):
         if message.author.id not in self.authedUsers:
             await dcClient.runDiscord(message.reply("No Access."))
 

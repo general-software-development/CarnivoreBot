@@ -1,5 +1,6 @@
 from discord import Message
 from abc import ABC, abstractmethod
+from typing import Iterable
 
 class CommandABC:
     @abstractmethod
@@ -11,5 +12,5 @@ class CommandABC:
         ...
 
     @abstractmethod
-    async def onRunCommand(self, message: Message) -> None:
+    async def onRunCommand(self, message: Message, cmd: Iterable[str]) -> None:
         ...
