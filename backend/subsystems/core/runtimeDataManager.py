@@ -4,7 +4,7 @@ from .suppressErrors import SuppressErrors
 from .logErrors import LogErrors
 from .logManager import getLogger
 from .visual.size import toHumanReadable
-from .dependencies import Optional
+from typing import Optional
 from time import sleep
 import sys
 
