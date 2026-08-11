@@ -1,4 +1,5 @@
-from .dependencies import logging, colorama
+import logging
+import colorama
 from datetime import datetime
 
 logging.getLogger("werkzeug").setLevel(logging.ERROR);

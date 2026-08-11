@@ -82,9 +82,9 @@ def newThread():
         sleep(5)
         for (name, subsystem) in data.items():
             if deepSize(subsystem) >= subsystem_size_limits.get(name, 512) * 15:
-                logger.critical(f"Size of runtime data subsystem {name} exceeds the limit of {toHumanReadable(subsystem_size_limits.get(name, 512))} by 15x (or more), currently occupying {toHumanReadable(deepSize(subsystem))}")
+                logger.critical(f"Size of runtime data subsystem '{name}' exceeds the limit of {toHumanReadable(subsystem_size_limits.get(name, 512))} by 15x (or more), currently occupying {toHumanReadable(deepSize(subsystem))}")
             elif deepSize(subsystem) >= subsystem_size_limits.get(name, 512):
-                logger.warning(f"Size of runtime data subsystem {name} exceeds the limit of {toHumanReadable(subsystem_size_limits.get(name, 512))}, currently occupying {toHumanReadable(deepSize(subsystem))}")
+                logger.warning(f"Size of runtime data subsystem '{name}' exceeds the limit of {toHumanReadable(subsystem_size_limits.get(name, 512))}, currently occupying {toHumanReadable(deepSize(subsystem))}")
 
 if threading.current_thread() is threading.main_thread():
     Thread(target=newThread, name="runtimeDataManagerThread", daemon=True).start()

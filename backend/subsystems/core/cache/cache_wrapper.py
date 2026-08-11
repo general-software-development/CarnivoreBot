@@ -26,3 +26,7 @@ class CachedProperty:
 
     def __set__(self, instance: object, value: Any) -> None:
         raise AttributeError("can't set attribute (cached property is read-only)")
+
+if not RDM.readSubsystem("cache"):
+    RDM.writeSubsystem("cache", {})
+    RDM.configSubsystem("cache", maxSize=16 * 1024)  # 16 KiB
