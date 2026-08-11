@@ -70,7 +70,10 @@ RDM-Subsystems:"""
             for subsystem, data in RDM.data.items():
                 text += f"""
  - Name: {subsystem!r}
-   Size: {toHumanReadable(RDM.deepSize(data))!r}"""
+   Size: {toHumanReadable(RDM.deepSize(data))!r}
+   Entries: {('\n    - ' + '\n    - '.join([
+       f"Name: {key!r}\n      Size: {toHumanReadable(RDM.deepSize(value))!r}" for key, value in data.items()
+   ])) if len(data.values()) >= 1 else '[]'}"""
 
         text += "\n```"
 

@@ -4,7 +4,7 @@ from .suppressErrors import SuppressErrors
 from .logErrors import LogErrors
 from .logManager import getLogger
 from .visual.size import toHumanReadable
-from typing import Optional
+from typing import Optional, Any
 from time import sleep
 import sys
 
@@ -15,7 +15,7 @@ subsystem_size_limits: dict[str, int] = {}
 data_lock = RLock()
 
 import torch
-def deepSize(value: dict | list, seen: set[int] | None = None) -> int:
+def deepSize(value: Any, seen: set[int] | None = None) -> int:
     if seen is None:
         seen = set()
 
