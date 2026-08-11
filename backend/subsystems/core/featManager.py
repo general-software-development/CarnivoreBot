@@ -1,10 +1,12 @@
 from collections.abc import Coroutine
 import threading
-from .dependencies import sys, Callable, fntools, queue, Any
+import sys
+import functools as fntools
+import queue
+from typing import Callable
 from . import logManager
 import asyncio
 from threading import RLock
-import typing
 
 logger = logManager.getLogger("featManager")
 
