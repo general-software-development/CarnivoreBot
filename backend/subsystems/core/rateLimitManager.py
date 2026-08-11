@@ -1,7 +1,7 @@
 from .logManager import getLogger
 from . import runtimeDataManager as RDM
 from datetime import datetime, timedelta
-from .dependencies import Any
+from typing import Any
 from .logErrors import LogErrors
 from .suppressErrors import SuppressErrors
 from threading import RLock
