@@ -33,6 +33,7 @@ class GetEnvCommand(CommandABC):
     async def onRunCommand(self, message, cmd):
         if message.author.id not in self.authedUsers:
             await dcClient.runDiscord(message.reply("No Access."))
+            return
 
         if "!gc-clean" not in cmd:
             gc.collect()
