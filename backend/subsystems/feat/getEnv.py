@@ -4,6 +4,8 @@ from ..core.assetManager import AssetManager
 from ..core.featManager import start_feat, queuedFunctionAsync, detachAsync
 from ..core.visual import size
 from ..core.logManager import getLogger
+from ..core import runtimeDataManager as RDM
+from ..core.visual.size import toHumanReadable
 
 # For statistics
 import torch
@@ -57,8 +59,19 @@ GC-No-Tracked-Objects:
  - Generation-0: {len(gc.get_objects(0)):,}
  - Generation-1: {len(gc.get_objects(1)):,}
  - Generation-2: {len(gc.get_objects(2)):,}
-```
 """
+
+        if "!rdm" not in cmd:
+            text += f"""
+RDM-Total-Size: {toHumanReadable(RDM.deepSize(RDM.data))!r}
+RDM-Subsystems:"""
+
+            for subsystem, data in RDM.data.items():
+                text += f"""
+ - Name: {subsystem!r}
+   Size: {toHumanReadable(RDM.deepSize(data))!r}"""
+
+        text += "\n```"
 
         await dcClient.runDiscord(message.reply(text))
 
