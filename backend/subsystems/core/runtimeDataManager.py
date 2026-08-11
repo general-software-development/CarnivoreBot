@@ -19,6 +19,9 @@ def deepSize(value: dict | list, seen: set[int] | None = None) -> int:
     if seen is None:
         seen = set()
 
+    if id(value) in seen:
+        return 0
+
     seen.add(id(value))
 
     if isinstance(value, list):
