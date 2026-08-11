@@ -79,7 +79,7 @@ def configSubsystem(subsystem: str, *_, maxSize: Optional[int]):
 def newThread():
     logger = getLogger("runtimeDataManager")
     while True:
-        sleep(5)
+        sleep(30)
         for (name, subsystem) in data.items():
             if deepSize(subsystem) >= subsystem_size_limits.get(name, 512) * 15:
                 logger.critical(f"Size of runtime data subsystem '{name}' exceeds the limit of {toHumanReadable(subsystem_size_limits.get(name, 512))} by 15x (or more), currently occupying {toHumanReadable(deepSize(subsystem))}")
