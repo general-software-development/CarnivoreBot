@@ -14,15 +14,15 @@ async def createRateLimit(command: str) -> None:
     with ratelimit_commands_lock:
         ratelimit_commands.append(command)
     
-    await RDM.writeSubsystem(f"rateLimitManager:{command}", {})
+    RDM.writeSubsystem(f"rateLimitManager:{command}", {})
 
 async def addRateLimit(target: str | int | Any, command: str, time: timedelta) -> None:
     with SuppressErrors(), LogErrors():
-        await RDM.writeData(f"rateLimitManager:{command}", target, datetime.now() + time)
+        RDM.writeData(f"rateLimitManager:{command}", target, datetime.now() + time)
 
 async def getRateLimit(target: str | int | Any, command: str) -> timedelta:
     with SuppressErrors(), LogErrors():
-        targetTime = await RDM.readData(f"rateLimitManager:{command}", target)
+        targetTime = RDM.readData(f"rateLimitManager:{command}", target)
 
         if targetTime is None:
             return timedelta()
@@ -39,10 +39,10 @@ async def getRateLimit(target: str | int | Any, command: str) -> timedelta:
 async def refreshRateLimits(command: str) -> bool:
     try:
         with LogErrors():
-            ratelimits = await RDM.readSubsystem(f"rateLimitManager:{command}")
+            ratelimits = RDM.readSubsystem(f"rateLimitManager:{command}")
             for (identifier, targetTime) in ratelimits.items():
                 if datetime.now() >= targetTime:
-                    await RDM.popData(f"rateLimitManager:{command}", identifier)
+                    RDM.popData(f"rateLimitManager:{command}", identifier)
             
             return True
         

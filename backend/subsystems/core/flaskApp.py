@@ -1,3 +1,7 @@
+import warnings
+
+warnings.warn("The flaskApp module is deprecated and no longer in use. Please abandon all left-over uses of flaskApp, and do not introduce it into newer code.", category=DeprecationWarning, stacklevel=2)
+
 from flask import Flask
 from .logManager import getLogger
 

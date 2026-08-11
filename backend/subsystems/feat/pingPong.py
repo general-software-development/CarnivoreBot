@@ -25,8 +25,6 @@ class PingPongCommand:
     async def _onRunCommand(self, message: Message) -> None:
         userId = message.author.id
 
-        await rateLimitManager.refreshRateLimits("ping")
-
         with LogErrors('pingPong'):
             if (ratelimit := await rateLimitManager.getRateLimit(userId, "ping")) > timedelta():
                 await dcClient.runDiscord(message.reply(f"You are being rate limited. Please wait {ratelimit.seconds} seconds before trying again."))

@@ -1,6 +1,7 @@
 from .dependencies import *
 from . import logManager
 import types
+from .cache.cache_wrapper import CachedProperty
 
 logger = logManager.getLogger("assetManager")
 
@@ -11,22 +12,22 @@ class AssetManager:
         self.rootPath = pathlib.Path(__file__).parent.parent.parent.parent
         logger.success('Initialised')
 
-    @cached_property
+    @CachedProperty
     def backendPath(self):
         logger.debug('Dereferencing backendPath')
         return self.rootPath / "backend"
     
-    @cached_property
+    @CachedProperty
     def corePath(self):
         logger.debug('Dereferencing corePath')
         return self.backendPath / "subsystems" / "core"
 
-    @cached_property
+    @CachedProperty
     def testsPath(self):
         logger.debug('Dereferencing testsPath')
         return self.backendPath / "subsystems" / "tests"
     
-    @cached_property
+    @CachedProperty
     def settings(self):
         logger.debug('Dereferencing settings')
         try:
@@ -36,7 +37,7 @@ class AssetManager:
             logger.critical('Failed to load settings.')
             logger.critical(e, exc_info=True, stack_info=True, stacklevel=3)
 
-    @cached_property
+    @CachedProperty
     def config(self):
         logger.debug('Dereferencing config')
         settings = self.settings

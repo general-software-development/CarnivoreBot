@@ -30,8 +30,8 @@ def attempt_import(module_name):
 async def load_model():
     RDM.configSubsystem("feat:checkIsSpam:downloaded", maxSize = 4194304)
 
-    if ai := await RDM.readData("feat:checkIsSpam:downloaded", "classifier"):
-        if tkn := await RDM.readData("feat:checkIsSpam:downloaded", "tokenizer"):
+    if ai := RDM.readData("feat:checkIsSpam:downloaded", "classifier"):
+        if tkn := RDM.readData("feat:checkIsSpam:downloaded", "tokenizer"):
             return ai, tkn
 
     logger = getLogger("checkIsSpam")
@@ -79,8 +79,8 @@ async def load_model():
         logger.info(f"Running model on the GPU in float16.")
         MODEL = MODEL.to(dtype=torch.float16)
 
-    await RDM.writeData("feat:checkIsSpam:downloaded", "classifier", MODEL)
-    await RDM.writeData("feat:checkIsSpam:downloaded", "tokenizer", tokenizer)
+    RDM.writeData("feat:checkIsSpam:downloaded", "classifier", MODEL)
+    RDM.writeData("feat:checkIsSpam:downloaded", "tokenizer", tokenizer)
 
     logger.success(f"Downloaded and loaded model {model_name}")
 

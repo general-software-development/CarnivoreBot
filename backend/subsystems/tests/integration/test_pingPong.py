@@ -9,7 +9,7 @@ import pytest
 
 class TestReply:
     async def test_reply_noratelimit(self):
-        await RDM.writeSubsystem("rateLimitManager:ping", {})
+        RDM.writeSubsystem("rateLimitManager:ping", {})
 
         dcClient.discordLoop = asyncio.get_running_loop()
 
@@ -21,7 +21,7 @@ class TestReply:
         msg.reply.assert_awaited_once_with("Pong!")
 
     async def test_reply_ratelimit(self):
-        await RDM.writeSubsystem("rateLimitManager:ping", {})
+        RDM.writeSubsystem("rateLimitManager:ping", {})
 
         dcClient.discordLoop = asyncio.get_running_loop()
 
@@ -49,7 +49,7 @@ class TestDelay:
         [1]
     ])
     async def test_max_delay(self, maxDelayMs: int | float):
-        await RDM.writeSubsystem("rateLimitManager:ping", {})
+        RDM.writeSubsystem("rateLimitManager:ping", {})
         
         dcClient.discordLoop = asyncio.get_running_loop()
         

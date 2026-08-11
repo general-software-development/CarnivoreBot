@@ -4,7 +4,7 @@ import time
 from subsystems.core import runtimeDataManager as RDM
 
 async def clear_rdm_data(sub: str):
-    await RDM.writeSubsystem(sub, {})
+    RDM.writeSubsystem(sub, {})
 
 import random
 
@@ -28,7 +28,7 @@ class TestRead:
     async def test_eq_read_value(self, subsystemName: str, keyName: str, expectedValue):
         await self.prep_mock()
 
-        data = await RDM.readData(subsystemName, keyName)
+        data = RDM.readData(subsystemName, keyName)
 
         assert data == expectedValue
 
@@ -40,7 +40,7 @@ class TestRead:
     async def test_is_read_value(self, subsystemName: str, keyName: str, expectedValue, expectedResult: bool):
         await self.prep_mock()
 
-        data = await RDM.readData(subsystemName, keyName)
+        data = RDM.readData(subsystemName, keyName)
 
         assert (data is expectedValue) if expectedResult else (data is not expectedValue)
 
@@ -51,7 +51,7 @@ class TestRead:
     async def test_eq_read_sub(self, subsystemName: str, expectedDict: dict):
         await self.prep_mock()
 
-        data = await RDM.readSubsystem(subsystemName)
+        data = RDM.readSubsystem(subsystemName)
 
         assert data == expectedDict
 
@@ -62,20 +62,20 @@ class TestRead:
     async def test_is_read_sub(self, subsystemName: str, expectedDict: dict):
         await self.prep_mock()
 
-        data = await RDM.readSubsystem(subsystemName)
+        data = RDM.readSubsystem(subsystemName)
 
         assert data is not expectedDict
 
     async def test_read_missing(self):
         await self.prep_mock()
 
-        data = await RDM.readData("fake", "missing")
+        data = RDM.readData("fake", "missing")
         assert data is None
 
     async def test_read_sub_missing(self):
         await self.prep_mock()
 
-        data = await RDM.readSubsystem("fake")
+        data = RDM.readSubsystem("fake")
         assert data is None
 
 class TestWriteRead:
@@ -93,40 +93,40 @@ class TestWriteRead:
     async def test_update_1(self):
         await self.prep_mock()
 
-        original = await RDM.readData('cache', 'test')
+        original = RDM.readData('cache', 'test')
         assert original == 123
 
-        await RDM.writeData('cache', 'test', 124)
-        new = await RDM.readData('cache', 'test')
+        RDM.writeData('cache', 'test', 124)
+        new = RDM.readData('cache', 'test')
         assert new == 124
 
     async def test_update_2(self):
         await self.prep_mock()
 
-        original = await RDM.readData('downloaded', 'modelData')
+        original = RDM.readData('downloaded', 'modelData')
         assert original == [1, 2, 3]
         original[1] = 3
-        await RDM.writeData('downloaded', 'modelData', original)
+        RDM.writeData('downloaded', 'modelData', original)
 
-        new = await RDM.readData('downloaded', 'modelData')
+        new = RDM.readData('downloaded', 'modelData')
         assert new == [1, 3, 3]
 
-        sub = await RDM.readSubsystem('downloaded')
+        sub = RDM.readSubsystem('downloaded')
         assert sub['modelData'] == [1, 3, 3]
 
     async def test_indifference_subsystem(self):
         await self.prep_mock()
 
-        await RDM.writeData('cache', 'test', random.randint(0, 10000))
+        RDM.writeData('cache', 'test', random.randint(0, 10000))
 
-        assert (await RDM.readData('downloaded', 'model')) == "abc"
+        assert (RDM.readData('downloaded', 'model')) == "abc"
 
     async def test_indifference_key(self):
         await self.prep_mock()
 
-        await RDM.writeData('downloaded', 'model', 'newModel')
+        RDM.writeData('downloaded', 'model', 'newModel')
 
-        assert (await RDM.readData('downloaded', 'modelData')) == [1, 2, 3]
+        assert (RDM.readData('downloaded', 'modelData')) == [1, 2, 3]
 
 class TestDelay:
     async def prep_mock_template(self):
@@ -148,7 +148,7 @@ class TestDelay:
         await self.prep_mock_template()
 
         start = time.time()
-        await RDM.writeData("cache", "test", 188)
+        RDM.writeData("cache", "test", 188)
         dt = time.time() - start
 
         assert dt <= maxDelayMs / 1000
@@ -158,7 +158,7 @@ class TestDelay:
         await self.prep_mock_empty()
 
         start = time.time()
-        await RDM.writeData("cache", "test", 188)
+        RDM.writeData("cache", "test", 188)
         dt = time.time() - start
 
         assert dt <= maxDelayMs / 1000
@@ -168,7 +168,7 @@ class TestDelay:
         await self.prep_mock_template()
 
         start = time.time()
-        await RDM.writeSubsystem("cache", { "test": 188 } )
+        RDM.writeSubsystem("cache", { "test": 188 } )
         dt = time.time() - start
 
         assert dt <= maxDelayMs / 1000
@@ -178,7 +178,7 @@ class TestDelay:
         await self.prep_mock_template()
 
         start = time.time()
-        await RDM.writeSubsystem("cache", { "test": 188 } )
+        RDM.writeSubsystem("cache", { "test": 188 } )
         dt = time.time() - start
 
         assert dt <= maxDelayMs / 1000
@@ -188,7 +188,7 @@ class TestDelay:
         await self.prep_mock_template()
 
         start = time.time()
-        await RDM.readData("cache", "test")
+        RDM.readData("cache", "test")
         dt = time.time() - start
 
         assert dt <= maxDelayMs / 1000
@@ -198,7 +198,7 @@ class TestDelay:
         await self.prep_mock_template()
 
         start = time.time()
-        await RDM.readSubsystem("cache")
+        RDM.readSubsystem("cache")
         dt = time.time() - start
 
         assert dt <= maxDelayMs / 1000

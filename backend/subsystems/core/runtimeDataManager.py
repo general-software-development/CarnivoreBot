@@ -44,29 +44,29 @@ def deepSize(value: dict | list, seen: set[int] | None = None) -> int:
     else:
         return sys.getsizeof(value)
 
-async def readData(subsystem: str, key: any) -> any:
+def readData(subsystem: str, key: any) -> any:
     with data_lock:
         value = data.get(subsystem, {}).get(key)
 
     return value
 
-async def readSubsystem(subsystem: str) -> dict[any, any] | None:
+def readSubsystem(subsystem: str) -> dict[any, any] | None:
     with data_lock:
         value = data.get(subsystem)
 
     return copy.deepcopy(value)
 
-async def writeSubsystem(subsystem: str, value: dict[any, any]) -> None:
+def writeSubsystem(subsystem: str, value: dict[any, any]) -> None:
     with data_lock:
         data[subsystem] = value
 
-async def writeData(subsystem: str, key: any, value: any) -> None:
+def writeData(subsystem: str, key: any, value: any) -> None:
     with data_lock:
         if (data.get(subsystem, None) is None):
             data[subsystem] = {}
         data[subsystem][key] = value
 
-async def popData(subsystem: str, key: any) -> None:
+def popData(subsystem: str, key: any) -> None:
     with data_lock:
         if (v := data.get(subsystem)) is not None:
             with SuppressErrors(), LogErrors():
