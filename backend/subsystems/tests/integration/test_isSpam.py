@@ -1,5 +1,5 @@
 import shlex
-from subsystems.core import dcClient
+from subsystems.core.dc import dcClient
 from subsystems.feat.checkIsSpam import CheckIsSpamCommand, load_model
 from subsystems.tests.utils.mockDc import DcMessage
 import asyncio

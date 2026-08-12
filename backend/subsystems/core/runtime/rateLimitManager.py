@@ -1,9 +1,9 @@
-from .logManager import getLogger
+from ..log.logManager import getLogger
 from . import runtimeDataManager as RDM
 from datetime import datetime, timedelta
 from typing import Any
-from .logErrors import LogErrors
-from .suppressErrors import SuppressErrors
+from ..log.logErrors import LogErrors
+from ..log.suppressErrors import SuppressErrors
 from threading import RLock
 import threading
 

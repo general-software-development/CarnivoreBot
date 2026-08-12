@@ -4,7 +4,7 @@ import sys
 import functools as fntools
 import queue
 from typing import Callable
-from . import logManager
+from ..log import logManager
 import asyncio
 from threading import RLock
 

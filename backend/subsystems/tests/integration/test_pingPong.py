@@ -1,9 +1,9 @@
 import asyncio
 import time
-from subsystems.core import dcClient
+from subsystems.core.dc import dcClient
 from subsystems.feat.pingPong import PingPongCommand
 from subsystems.tests.utils.mockDc import DcMessage
-from subsystems.core import runtimeDataManager as RDM
+from subsystems.core.runtime import runtimeDataManager as RDM
 
 import pytest
 

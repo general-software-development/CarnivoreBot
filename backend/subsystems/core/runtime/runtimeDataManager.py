@@ -1,9 +1,9 @@
 from threading import RLock, Thread
 import threading
-from .suppressErrors import SuppressErrors
-from .logErrors import LogErrors
-from .logManager import getLogger
-from .visual.size import toHumanReadable
+from ..log.suppressErrors import SuppressErrors
+from ..log.logErrors import LogErrors
+from ..log.logManager import getLogger
+from ...utils.visual.size import toHumanReadable
 from typing import Optional, Any
 from time import sleep
 import sys

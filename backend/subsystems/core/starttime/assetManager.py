@@ -1,9 +1,9 @@
 import pathlib
 import tomllib as toml
 from typing import Any
-from . import logManager
+from ..log import logManager
 import types
-from .cache.cache_wrapper import CachedProperty
+from ...utils.cache.cache_wrapper import CachedProperty
 
 logger = logManager.getLogger("assetManager")
 
@@ -11,7 +11,7 @@ logger = logManager.getLogger("assetManager")
 class AssetManager:
     def __init__(self):
         logger.info('Initialising...')
-        self.rootPath = pathlib.Path(__file__).parent.parent.parent.parent
+        self.rootPath = pathlib.Path(__file__).parent.parent.parent.parent.parent
         logger.success('Initialised')
 
     @CachedProperty

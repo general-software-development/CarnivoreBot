@@ -1,12 +1,12 @@
 import discord
-from .logManager import getLogger
-from .logErrors import LogErrors
-from .assetManager import AssetManager
+from ..log.logManager import getLogger
+from ..log.logErrors import LogErrors
+from ..starttime.assetManager import AssetManager
 from typing import Callable, Coroutine, Literal
 import asyncio as aio
 from collections.abc import Coroutine
 import shlex
-from .mainThread import mainLoop
+from ..starttime.mainThread import mainLoop
 
 logger = getLogger("dcClient")
 

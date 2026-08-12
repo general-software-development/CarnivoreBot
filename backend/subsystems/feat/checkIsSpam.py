@@ -2,8 +2,8 @@ import os
 import importlib
 import shutil
 import pathlib
-from ..core.logManager import getLogger
-from ..core import runtimeDataManager as RDM
+from ..core.log.logManager import getLogger
+from ..core.runtime import runtimeDataManager as RDM
 from typing import Iterable
 from html import unescape
 
@@ -87,9 +87,9 @@ async def load_model():
     return MODEL, tokenizer
 
 from ..abstract.feature import CommandABC
-from ..core import dcClient
-from ..core import rateLimitManager
-from ..core.featManager import detachAsync, queuedFunctionAsync, start_feat
+from ..core.dc import dcClient
+from ..core.runtime import rateLimitManager
+from ..core.feat.featManager import detachAsync, queuedFunctionAsync, start_feat
 import discord
 import asyncio
 
