@@ -8,6 +8,8 @@ from typing import Optional, Any
 from time import sleep
 import sys
 
+from .typeCheck import typecheck_simple, typecheck_complex
+
 import copy
 
 data: dict[str, dict[any, any]] = {}
@@ -15,6 +17,8 @@ subsystem_size_limits: dict[str, int] = {}
 data_lock = RLock()
 
 import torch
+
+@typecheck_complex
 def deepSize(value: Any, seen: set[int] | None = None) -> int:
     if seen is None:
         seen = set()
@@ -47,34 +51,40 @@ def deepSize(value: Any, seen: set[int] | None = None) -> int:
     else:
         return sys.getsizeof(value)
 
-def readData(subsystem: str, key: any) -> any:
+@typecheck_simple
+def readData(subsystem: str, key: Any) -> Any:
     with data_lock:
         value = data.get(subsystem, {}).get(key)
 
     return value
 
-def readSubsystem(subsystem: str) -> dict[any, any] | None:
+@typecheck_simple
+def readSubsystem(subsystem: str) -> dict[Any, Any] | None:
     with data_lock:
         value = data.get(subsystem)
 
     return copy.deepcopy(value)
 
-def writeSubsystem(subsystem: str, value: dict[any, any]) -> None:
+@typecheck_complex
+def writeSubsystem(subsystem: str, value: dict[Any, Any]) -> None:
     with data_lock:
         data[subsystem] = value
 
-def writeData(subsystem: str, key: any, value: any) -> None:
+@typecheck_simple
+def writeData(subsystem: str, key: Any, value: Any) -> None:
     with data_lock:
         if (data.get(subsystem, None) is None):
             data[subsystem] = {}
         data[subsystem][key] = value
 
-def popData(subsystem: str, key: any) -> None:
+@typecheck_simple
+def popData(subsystem: str, key: Any) -> None:
     with data_lock:
         if (v := data.get(subsystem)) is not None:
             with SuppressErrors(), LogErrors():
                 v.pop(key)
 
+@typecheck_simple
 def configSubsystem(subsystem: str, *_, maxSize: Optional[int]):
     if maxSize is not None:
         subsystem_size_limits[subsystem] = maxSize

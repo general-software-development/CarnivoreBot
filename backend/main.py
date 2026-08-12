@@ -1,3 +1,7 @@
+from subsystems.core.starttime.assetManager import AssetManager
+from subsystems.core.starttime import config as configHandler
+configHandler.setConfig(AssetManager.config)
+
 from subsystems.core.runtime import rateLimitManager
 
 from subsystems.feat import pingPong
@@ -7,7 +11,6 @@ from subsystems.feat import getEnv
 from subsystems.core.starttime import mainThread
 
 from subsystems.core.dc.dcClient import startClient
-from subsystems.core.starttime.assetManager import AssetManager
 import discord
 
 import asyncio

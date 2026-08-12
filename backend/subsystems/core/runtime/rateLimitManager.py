@@ -6,20 +6,24 @@ from ..log.logErrors import LogErrors
 from ..log.suppressErrors import SuppressErrors
 from threading import RLock
 import threading
+from .typeCheck import typecheck_simple
 
 ratelimit_commands = []
 ratelimit_commands_lock = RLock()
 
+@typecheck_simple
 async def createRateLimit(command: str) -> None:
     with ratelimit_commands_lock:
         ratelimit_commands.append(command)
     
     RDM.writeSubsystem(f"rateLimitManager:{command}", {})
 
+@typecheck_simple
 async def addRateLimit(target: str | int | Any, command: str, time: timedelta) -> None:
     with SuppressErrors(), LogErrors():
         RDM.writeData(f"rateLimitManager:{command}", target, datetime.now() + time)
 
+@typecheck_simple
 async def getRateLimit(target: str | int | Any, command: str) -> timedelta:
     with SuppressErrors(), LogErrors():
         targetTime = RDM.readData(f"rateLimitManager:{command}", target)
@@ -36,6 +40,7 @@ async def getRateLimit(target: str | int | Any, command: str) -> timedelta:
     
     return timedelta()
 
+@typecheck_simple
 async def refreshRateLimits(command: str) -> bool:
     try:
         with LogErrors():

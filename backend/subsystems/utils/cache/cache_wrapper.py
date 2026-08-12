@@ -3,7 +3,10 @@ from subsystems.core.runtime import runtimeDataManager as RDM
 from typing import Callable, Any
 import uuid
 
+from beartype import beartype
+
 class CachedProperty:
+    @beartype
     def __init__(self, func: Callable) -> None:
         self.func = func
         self.__doc__ = func.__doc__

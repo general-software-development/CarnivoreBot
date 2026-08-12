@@ -11,3 +11,7 @@ Prefix = ";"
 
 [Bot.Command.getEnv]
 AuthedUsers = [808381764623532102]
+
+[Runtime.TypeChecking]
+Typeguard = true
+Beartype = true

@@ -1,3 +1,6 @@
+from subsystems.core.runtime.typeCheck import typecheck_simple
+
+@typecheck_simple
 def toHumanReadable(no_bytes: int) -> int:
     units = ("B", "KiB", "MiB", "GiB", "TiB", "PiB")
 
