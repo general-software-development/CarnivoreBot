@@ -64,7 +64,7 @@ def registerCommand(cmd: str, handler: Callable[[discord.Message, list[str]], Co
         if not message.content.startswith(prefix):
             return False
         
-        if not message.content.startswith(f"{prefix}{cmd}"):
+        if not (message.content.startswith(f"{prefix}{cmd} ") or message.content == f"{prefix}{cmd}"):  # TODO: Move this into another function and unit test it
             return False
         
         logger.info(f"Command {prefix}{cmd} was called: '{message.content}'")

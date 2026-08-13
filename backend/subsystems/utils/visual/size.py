@@ -1,7 +1,7 @@
 from subsystems.core.runtime.typeCheck import typecheck_simple
 
 @typecheck_simple
-def toHumanReadable(no_bytes: int) -> int:
+def toHumanReadable(no_bytes: int) -> str:
     units = ("B", "KiB", "MiB", "GiB", "TiB", "PiB")
 
     def do_round(size: float) -> float:
