@@ -2,7 +2,7 @@ from discord import Message
 from abc import ABC, abstractmethod
 from typing import Iterable
 
-class CommandABC:
+class CommandABC(ABC):
     @abstractmethod
     def __init__(self):
         ...
