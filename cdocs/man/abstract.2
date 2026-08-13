@@ -1,4 +1,4 @@
-.TH "CarnivoreBot Contributor Documentation" 1 0000-00-00 Subsystems:Abstract Feature.py
+.TH "CarnivoreBot Contributor Documentation" 1 0000-00-00 Subsystems:Abstract abstract.feature.py
 
 .SH CONTENT
 
@@ -6,8 +6,9 @@
 
 Used by: \fIfeat(1)\fP
 
-.RS
-.nf
+.P
+.in +4n
+.EX
 from discord import Message
 
 class CommandABC:
@@ -19,5 +20,6 @@ class CommandABC:
 
     @abstractmethod
     async def onRunCommand(self, message: Message, cmd: Iterable[str]) -> None: ...
-.fi
-.RE
+.EE
+.in
+.P

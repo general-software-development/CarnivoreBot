@@ -1,0 +1,176 @@
+.TH "CarnivoreBot Contributor Documentation" 1 0000-00-00 Subsystems:Core core.dc
+
+.SH PURPOSE
+The core.dc subsystem handles communication between the CarnivoreBot code and discord.py.
+
+For example, it handles moving tasks involving discord.py from feature threads onto the main thread, as is required by the discord.py API.
+
+Used by: \fIfeat(1)\fR
+
+.SH PUBLIC API
+The API intended to be used by the rest of the project - specifically \fIfeat(1)\fR - is the following:
+
+.P
+.in +4n
+.EX
+import discord
+
+@fnTypes.public
+def registerCommand(cmd: str, handler: Callable[[discord.Message], Coroutine], includePrefix: bool = True):
+    ...
+
+@fnTypes.public
+def registerHandler(event: Literal['onMessage'], handler: Callable[[discord.Message], Coroutine]):
+    ...
+
+@fnTypes.public
+def runDiscord(cr: Coroutine) -> asyncio.Future:
+    ...
+.EE
+.in
+.P
+
+.SS SYNTAX
+
+\# for registerCommand
+.P
+.in +2n
+.EX
+@fnTypes.public
+def registerCommand(cmd: str, handler: Callable[[discord.Message, list[str]], Coroutine], includePrefix: bool = True):
+    ...
+.EE
+.P
+
+.in +4n
+\fBParameters\fR
+.IP "" 8
+\f[CR]\fBcmd: str\fR \- Defines the command name (ex. \f[CR]\fB"ping"\fR)
+
+.IP "" 8
+\f[CR]\fBhandler: Callable[[discord.Message, list[str]], Coroutine]\fR \- Defines the function to be called with the discord message and a shell-like-split version of the message's content, which returns an awaitable \f[CR]\fBCoroutine\fR
+
+.IP "" 8
+\f[CR]\fBincludePrefix: bool = True\fR \- Defines whether the command needs to be called with or without the prefix defined in \f[CR]\fBconfig.toml\fR. Default: \f[CR]\fBTrue\fR
+
+.in
+
+.in
+.P
+\# for registerCommand
+
+\# for registerHandler
+.P
+.in +2n
+.EX
+@fnTypes.public
+def registerHandler(event: Literal['onMessage'], handler: Callable[[discord.Message], Coroutine]):
+    ...
+.EE
+.P
+
+.in +4n
+\fBParameters\fR
+.IP "" 8
+\f[CR]\fBevent: str\fR \- the event name to register a handler for
+
+.IP "" 8
+\f[CR]\fBhandler: Callable[[discord.Message], Coroutine]\fR \- the handler to be called with the discord message triggering the event, which returns an awaitable \f[CR]\fBCoroutine\fR
+
+.in
+.P
+\# for registerHandler
+
+\# for runDiscord
+.P
+.in +2n
+.EX
+@fnTypes.public
+def runDiscord(cr: Coroutine) -> asyncio.Future:
+    ...
+.EE
+.P
+
+.in +4n
+\fBParameters\fR
+.IP "" 8
+\f[CR]\fBcr: Coroutine\fR \- the coroutine to push onto the main thread's event loop via \f[CR]\fBasyncio.run_coroutine_threadsafe\fR
+
+.in -4n  \# idk why this is needed but it is needed
+\fBReturn Value\fR
+.IP "" 8
+\f[CR]\fBasyncio.Future\fR \- an awaitable Future. When awaited, it will await the coroutine that was pushed onto the main thread's event loop. Created via \f[CR]\fBaio.wrap_future\fR
+\# for runDiscord
+
+\#
+\#
+\#
+
+.SH PRIVATE API
+.P
+.in +4n
+.EX
+import discord
+
+@fnTypes.private
+async def startClient(cl: discord.Client, token: str):
+    ...
+
+@fnTypes.private
+def shlexSplit(msg: str) -> list[str]:
+    ...
+.EE
+.in
+.P
+
+.SS SYNTAX
+
+\# -- for startClient --
+.P
+.in +2n
+.EX
+@fnTypes.private
+async def startClient(cl: discord.Client, token: str):
+    ...
+.EE
+.P
+
+.in +4n
+\fBParameters\fR
+
+.in +4n
+\f[CR]\fBcl: discord.Client\fR \- the discord client to run
+
+\f[CR]\fBtoken: str\fR \- the token needed to run the discord client, specified in \f[CR]\fBconfig.toml\fR
+
+.P
+.in +2n
+.EX
+@fnTypes.private
+def shlexSplit(msg: str) -> list[str]:
+    ...
+.EE
+.P
+
+.in +4n
+\fBParameters\fR
+
+.in +4n
+\f[CR]\fBmsg: str\fR \- the message to split
+
+.in -4n
+\fBReturn Value\fR
+
+.in +4n
+\f[CR]\fBlist[str]\fR \- the message after being split with shell-like syntax
+
+.in -4n
+\fBNotes\fR
+
+.in +4n
+1. \f[CR]\fBshlexSplit\fR uses the \f[CR]\fIshlex\fR library to split the message
+
+2. If splitting via \f[CR]\fIshlex\fR fails, the function falls back to splitting the message naively by spaces
+
+.in
+\# -- end startClient --

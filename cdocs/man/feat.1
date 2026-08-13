@@ -1,0 +1,43 @@
+.TH "CarnivoreBot Contributor Documentation" 1 0000-00-00 Subsystems Feat
+
+.SH PURPOSE
+The feat subsystem contains the code for all features and commands provided by the bot.
+
+.SH EXECUTION
+Each feature runs on a separate OS thread, with its own event loop.
+
+Communication between the main thread and these OS threads, as well as handling the creation of tasks for each interaction, is handled by \fImissing(0)\fP
+
+There is always a queue maintained, containing all interactions that the feature thread has yet to process. This is handles via the \fBqueuedFunctionAsync\fP wrapper:
+
+.P
+.in +4n
+.EX
+def queuedFunctionAsync():
+    def decorator(fn: Callable[..., Coroutine]) -> Callable:
+        fn.queue = queue.Queue()
+
+        @fntools.wraps(fn)
+        async def wrapper(*args, **kwargs):
+            fn.queue.put_nowait((args, kwargs))
+            ...
+
+        async def runForever(*args, **kwargs):
+            while True:
+                (args, kwargs) = await asyncio.to_thread(fn.queue.get)
+                loop = asyncio.get_event_loop()
+                loop.create_task(fn(*args, **kwargs))
+                fn.queue.task_done()
+
+        wrapper.runForever = runForever
+
+        return wrapper
+
+    return decorator
+.EE
+.in
+.P
+
+\fBPlease note that interactions are not processed in-order.\fP
+
+

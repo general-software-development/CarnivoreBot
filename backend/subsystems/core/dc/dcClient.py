@@ -7,6 +7,7 @@ import asyncio as aio
 from collections.abc import Coroutine
 import shlex
 from ..starttime.mainThread import mainLoop
+from subsystems.code import fnTypes
 
 logger = getLogger("dcClient")
 
@@ -18,6 +19,7 @@ listeners = {
 
 discordLoop: aio.EventLoop = mainLoop
 
+@fnTypes.private
 async def startClient(cl: discord.Client, token: str):
     global client
     client = cl
@@ -29,10 +31,11 @@ async def startClient(cl: discord.Client, token: str):
         logger.debug("Starting bot...")
         await client.start(token)
 
-#@client.event
+@fnTypes.internal
 async def on_ready():
     logger.success(f"Started bot: {client.user.name} (#{client.user.id})")
 
+@fnTypes.internal
 async def on_message(message: discord.Message):
     success = False
 
@@ -44,13 +47,15 @@ async def on_message(message: discord.Message):
     if success == False:
         ...
 
+@fnTypes.private
 def shlexSplit(msg: str) -> list[str]:
     try:
         return shlex.split(msg, False, True)
     except:
         return msg.split(" ")
 
-def registerCommand(cmd: str, handler: Callable[[discord.Message], Coroutine], includePrefix: bool = True):
+@fnTypes.public
+def registerCommand(cmd: str, handler: Callable[[discord.Message, list[str]], Coroutine], includePrefix: bool = True):
     logger.debug(f"Registered command: '{cmd}'. Prefix: {'enabled' if includePrefix else 'disabled'}")
 
     async def wrapper(message: discord.Message):
@@ -70,9 +75,11 @@ def registerCommand(cmd: str, handler: Callable[[discord.Message], Coroutine], i
         
     listeners['onMessage'].append(wrapper)
 
+@fnTypes.public
 def registerHandler(event: Literal['onMessage'], handler: Callable[[discord.Message], Coroutine]):
     listeners[event].append(handler)
 
+@fnTypes.public
 def runDiscord(cr: Coroutine) -> aio.Future:
     global discordLoop
     return aio.wrap_future(aio.run_coroutine_threadsafe(cr, discordLoop))
