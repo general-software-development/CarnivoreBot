@@ -1,6 +1,7 @@
 import discord
 from ..log.logManager import getLogger
 from ..log.logErrors import LogErrors
+from ..log.suppressErrors import SuppressErrors
 from ..starttime.assetManager import AssetManager
 from typing import Callable, Coroutine, Literal
 import asyncio as aio
@@ -40,12 +41,13 @@ async def on_message(message: discord.Message):
     success = False
 
     for listener in listeners['onMessage']:
-        with LogErrors('dcClient:on_message'):
-            if await listener(message):
-                success = True
+        with SuppressErrors():
+            with LogErrors('dcClient:on_message'):
+                if await listener(message):
+                    success = True
 
     if success == False:
-        ...
+        pass
 
 @fnTypes.private
 def shlexSplit(msg: str) -> list[str]:
