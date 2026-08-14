@@ -53,7 +53,7 @@ async def load_model():
         local_dir=".",
     )
     shutil.move(utils_path, os.path.abspath(pathlib.Path(__file__).parent / "temp_utils.py"))
-    _utils = importlib.import_module(".temp_utils", package="subsystems.feat")
+    _utils = importlib.import_module(".temp_utils", package="sub.feat")
     os.remove(os.path.abspath(pathlib.Path(__file__).parent / "temp_utils.py"))
     # Override class definitions with up-to-date classes to avoid future size missmatches.
     MLA = _utils.MLA

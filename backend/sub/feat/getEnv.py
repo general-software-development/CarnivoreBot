@@ -2,10 +2,10 @@ from ..abstract.feature import CommandABC
 from ..core.dc import dcClient
 from ..core.starttime.assetManager import AssetManager
 from ..core.feat.featManager import start_feat, queuedFunctionAsync, detachAsync
-from subsystems.utils.visual import size
+from sub.utils.visual import size
 from ..core.log.logManager import getLogger
 from ..core.runtime import runtimeDataManager as RDM
-from subsystems.utils.visual.size import toHumanReadable
+from sub.utils.visual.size import toHumanReadable
 
 # For statistics
 import torch

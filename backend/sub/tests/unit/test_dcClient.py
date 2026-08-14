@@ -1,5 +1,5 @@
 import pytest
-from subsystems.core.dc.dcClient import isCommand
+from sub.core.dc.dcClient import isCommand
 
 PREFIX = ';'
 

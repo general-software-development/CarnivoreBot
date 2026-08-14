@@ -1,7 +1,7 @@
 import pytest
 import time
 
-from subsystems.core.runtime import runtimeDataManager as RDM
+from sub.core.runtime import runtimeDataManager as RDM
 
 async def clear_rdm_data(sub: str):
     RDM.writeSubsystem(sub, {})

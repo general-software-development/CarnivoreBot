@@ -9,7 +9,7 @@ import asyncio as aio
 from collections.abc import Coroutine
 import shlex
 from ..starttime.mainThread import mainLoop
-from subsystems.code import fnTypes
+from sub.code import fnTypes
 
 logger = getLogger("dcClient")
 

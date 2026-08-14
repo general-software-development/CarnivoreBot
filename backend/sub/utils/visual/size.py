@@ -1,4 +1,4 @@
-from subsystems.core.runtime.typeCheck import typecheck_simple
+from sub.core.runtime.typeCheck import typecheck_simple
 
 @typecheck_simple
 def toHumanReadable(no_bytes: int) -> str:

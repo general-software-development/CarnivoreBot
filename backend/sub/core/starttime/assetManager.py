@@ -22,12 +22,12 @@ class AssetManager:
     @CachedProperty
     def corePath(self):
         logger.debug('Dereferencing corePath')
-        return self.backendPath / "subsystems" / "core"
+        return self.backendPath / "sub" / "core"
 
     @CachedProperty
     def testsPath(self):
         logger.debug('Dereferencing testsPath')
-        return self.backendPath / "subsystems" / "tests"
+        return self.backendPath / "sub" / "tests"
     
     @CachedProperty
     def settings(self):

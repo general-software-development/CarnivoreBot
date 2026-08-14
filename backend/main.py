@@ -1,16 +1,16 @@
-from subsystems.core.starttime.assetManager import AssetManager
-from subsystems.core.starttime import config as configHandler
+from sub.core.starttime.assetManager import AssetManager
+from sub.core.starttime import config as configHandler
 configHandler.setConfig(AssetManager.config)
 
-from subsystems.core.runtime import rateLimitManager
+from sub.core.runtime import rateLimitManager
 
-from subsystems.feat import pingPong
-from subsystems.feat import checkIsSpam
-from subsystems.feat import getEnv
+from sub.feat import pingPong
+from sub.feat import checkIsSpam
+from sub.feat import getEnv
 
-from subsystems.core.starttime import mainThread
+from sub.core.starttime import mainThread
 
-from subsystems.core.dc.dcClient import startClient
+from sub.core.dc.dcClient import startClient
 import discord
 
 import asyncio
@@ -19,7 +19,7 @@ import logging
 import argparse
 import pytest
 
-from subsystems.core.log.logManager import ColorFormatter
+from sub.core.log.logManager import ColorFormatter
 
 discord.utils.setup_logging(level=logging.INFO, root=False, formatter = ColorFormatter())
 
