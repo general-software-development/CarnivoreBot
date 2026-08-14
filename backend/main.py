@@ -7,6 +7,7 @@ from sub.core.runtime import rateLimitManager
 from sub.feat import pingPong
 from sub.feat import checkIsSpam
 from sub.feat import getEnv
+from sub.feat.shellcmd import shellcmd
 
 from sub.core.starttime import mainThread
 
@@ -36,6 +37,7 @@ async def main():
     pingPong.InitialisePingPongCommand()
     checkIsSpam.InitialiseCheckIsSpamCommand()
     getEnv.InitialiseGetEnvCommand()
+    shellcmd.InitShellCmd()
 
     await startClient(bot, AssetManager.settings['Discord']['App']['Auth']['AuthToken'])
 

@@ -7,6 +7,7 @@ from ...utils.visual.size import toHumanReadable
 from typing import Optional, Any
 from time import sleep
 import sys
+from types import SimpleNamespace
 
 from .typeCheck import typecheck_simple, typecheck_complex
 
@@ -48,6 +49,8 @@ def deepSize(value: Any, seen: set[int] | None = None) -> int:
         return sum(
             t.numel() * t.element_size() for t in list(value.parameters()) + list(value.buffers())
         )
+    elif isinstance(value, type) or isinstance(value, SimpleNamespace):
+        return sys.getsizeof(value) + deepSize(value.__dict__)
     else:
         return sys.getsizeof(value)
 

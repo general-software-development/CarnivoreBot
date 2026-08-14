@@ -82,7 +82,7 @@ def registerCommand(cmd: str, handler: Callable[[discord.Message, list[str]], Co
         if not isCommand(message.content, cmd, prefix):
             return False
         
-        logger.info(f"Command {prefix}{cmd} was called: '{message.content}'")
+        #logger.debug(f"Command {prefix}{cmd} was called: '{message.content}'")
 
         await handler(message, shlexSplit(message.content))
 

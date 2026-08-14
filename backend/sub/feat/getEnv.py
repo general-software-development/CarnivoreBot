@@ -48,10 +48,10 @@ class GetEnvCommand(CommandABC):
 ```yaml
 Python-Version: {sys.version!r}
 
-Total-Resident-Memory-Used: "{size.toHumanReadable(mem_info.rss)}"
-Total-Virtual-Memory-Used: "{size.toHumanReadable(mem_info.vms)}"
-Total-Resident-VRAM-Used: "{size.toHumanReadable(torch.cuda.memory_allocated()) if torch.cuda.is_available() else "-1B"}"
-Total-Virtual-VRAM-Used: "{size.toHumanReadable(torch.cuda.memory_reserved()) if torch.cuda.is_available() else "-1B"}"
+Total-Resident-Memory-Used: "{size.toHumanReadable(mem_info.rss)}"  # RSS
+Total-Virtual-Memory-Used: "{size.toHumanReadable(mem_info.vms)}"   # VMS
+Total-Resident-VRAM-Used: "{size.toHumanReadable(torch.cuda.memory_allocated()) if torch.cuda.is_available() else "-1B"}" # Allocated
+Total-Virtual-VRAM-Used: "{size.toHumanReadable(torch.cuda.memory_reserved()) if torch.cuda.is_available() else "-1B"}"   # Reserved
 \
 {("\nThreads: \n" + ''.join([format_thread_1(t) for t in threading.enumerate()]) + "\n") if "!thread" not in cmd else ""}\
 

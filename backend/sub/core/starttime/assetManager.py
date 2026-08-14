@@ -4,8 +4,21 @@ from typing import Any
 from ..log import logManager
 import types
 from ...utils.cache.cache_wrapper import CachedProperty
+from dataclasses import dataclass
+from warnings import deprecated
 
 logger = logManager.getLogger("assetManager")
+
+@dataclass(slots=True, frozen=True)
+class PathsAsset:
+    backend: pathlib.Path
+    sub: pathlib.Path
+    core: pathlib.Path
+    tests: pathlib.Path
+    feat: pathlib.Path
+    utils: pathlib.Path
+    abstract: pathlib.Path
+    subcode: pathlib.Path
 
 @lambda _: _()
 class AssetManager:
@@ -15,19 +28,35 @@ class AssetManager:
         logger.success('Initialised')
 
     @CachedProperty
+    @deprecated("Use AssetManager.paths instead")
     def backendPath(self):
         logger.debug('Dereferencing backendPath')
         return self.rootPath / "backend"
     
     @CachedProperty
+    @deprecated("Use AssetManager.paths instead")
     def corePath(self):
         logger.debug('Dereferencing corePath')
         return self.backendPath / "sub" / "core"
 
     @CachedProperty
+    @deprecated("Use AssetManager.paths instead")
     def testsPath(self):
         logger.debug('Dereferencing testsPath')
         return self.backendPath / "sub" / "tests"
+
+    @CachedProperty
+    def paths(self) -> PathsAsset:
+        return PathsAsset(
+            backend = self.rootPath / "backend",
+            sub = self.rootPath / "backend" / "sub",
+            core = self.rootPath / "backend" / "sub" / "core",
+            tests = self.rootPath / "backend" / "sub" / "tests",
+            feat = self.rootPath / "backend" / "sub" / "feat",
+            utils = self.rootPath / "backend" / "sub" / "utils",
+            abstract = self.rootPath / "backend" / "sub" / "abstract",
+            subcode = self.rootPath / "backend" / "sub" / "code"
+        )
     
     @CachedProperty
     def settings(self):
