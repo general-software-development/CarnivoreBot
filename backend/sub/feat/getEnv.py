@@ -13,6 +13,7 @@ import threading
 import psutil
 import os
 import sys
+from sub.core.runtime.statistics import rdmSizing
 
 import gc
 
@@ -64,7 +65,7 @@ GC-No-Tracked-Objects:
 
         if "!rdm" not in cmd:
             text += f"""
-RDM-Total-Size: {toHumanReadable(RDM.deepSize(RDM.data))!r}
+RDM-Total-Size: {rdmSizing.StatRDMSizing.totalSize!r}
 RDM-Subsystems:"""
 
             for subsystem, data in RDM.data.items():

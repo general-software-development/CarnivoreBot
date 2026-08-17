@@ -1,7 +1,19 @@
+# Secrets
 config.toml
+
+# Unrelated Large Artifacts
 *.tar
-.venv/
-uv.lock
-*__pycache__/
 build/
 carnivorebot.egg-info/
+
+# Environment
+.venv/
+
+# uv
+uv.lock
+
+# Python
+*__pycache__/
+
+# huggingface
+.cache
