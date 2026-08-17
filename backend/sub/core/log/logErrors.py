@@ -9,7 +9,7 @@ class LogErrors:
         return
 
     def __exit__(self, exc_type, exc_value, traceback):
-        if exc_value != None:
+        if exc_value is not None:
             try:
                 raise exc_value
             except exc_type:

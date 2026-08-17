@@ -1,8 +1,13 @@
+import sys
+import asyncio
+import logging
+import argparse
+import pytest
+import discord
+
 from sub.core.starttime.assetManager import AssetManager
 from sub.core.starttime import config as configHandler
 configHandler.setConfig(AssetManager.config)
-
-from sub.core.runtime import rateLimitManager
 
 from sub.feat import pingPong
 from sub.feat import checkIsSpam
@@ -12,13 +17,6 @@ from sub.feat.shellcmd import shellcmd
 from sub.core.starttime import mainThread
 
 from sub.core.dc.dcClient import startClient
-import discord
-
-import asyncio
-import logging
-
-import argparse
-import pytest
 
 from sub.core.log.logManager import ColorFormatter
 
@@ -44,6 +42,6 @@ async def main():
     await asyncio.Event().wait()
 
 if args.tests:
-    exit(pytest.main(["-v", AssetManager.testsPath]))
+    sys.exit(pytest.main(["-v", AssetManager.testsPath]))
 
 mainThread.mainLoop.run_until_complete(main())

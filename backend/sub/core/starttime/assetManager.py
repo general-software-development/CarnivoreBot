@@ -32,7 +32,7 @@ class AssetManager:
     def backendPath(self):
         logger.debug('Dereferencing backendPath')
         return self.rootPath / "backend"
-    
+
     @CachedProperty
     @deprecated("Use AssetManager.paths instead")
     def corePath(self):
@@ -57,9 +57,9 @@ class AssetManager:
             abstract = self.rootPath / "backend" / "sub" / "abstract",
             subcode = self.rootPath / "backend" / "sub" / "code"
         )
-    
+
     @CachedProperty
-    def settings(self):
+    def settings(self) -> dict:
         logger.debug('Dereferencing settings')
         try:
             with open(self.rootPath / "config.toml", 'rb') as f:
@@ -67,9 +67,10 @@ class AssetManager:
         except Exception as e:
             logger.critical('Failed to load settings.')
             logger.critical(e, exc_info=True, stack_info=True, stacklevel=3)
+            return {}
 
     @CachedProperty
-    def config(self):
+    def config(self) -> types.SimpleNamespace:
         logger.debug('Dereferencing config')
         settings = self.settings
 

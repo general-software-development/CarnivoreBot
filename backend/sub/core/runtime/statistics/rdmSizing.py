@@ -1,9 +1,9 @@
-from ...runtime import runtimeDataManager as RDM
-from ...runtime.typeCheck import typecheck_complex, typecheck_simple
+from pydantic import BaseModel
 from sub.utils.obj.clsselfinit import SelfInitCls
 from sub.utils.visual.size import toHumanReadable
+from ...runtime import runtimeDataManager as RDM
+from ...runtime.typeCheck import typecheck_complex, typecheck_simple
 
-from pydantic import BaseModel
 
 class RDMSubsystemInfo(BaseModel):
     name: str
@@ -37,7 +37,7 @@ class StatRDMSizing(SelfInitCls):
     def subsystems(self) -> tuple[RDMSubsystemInfo]:
         infos = []
 
-        for subsystem, data in RDM.data.items():
+        for subsystem, _ in RDM.data.items():
             info = self[subsystem]
             infos.append(info)
 
@@ -65,7 +65,7 @@ class StatRDMConfig(SelfInitCls):
     def subsystems(self) -> tuple[RDMSubsystemConfig]:
         subCfgs = []
 
-        for subsystem in RDM.data.keys():
+        for subsystem in RDM.data.keys(): # pylint: disable=consider-iterating-dictionary
             subCfgs.append(self[subsystem])
 
         return subCfgs

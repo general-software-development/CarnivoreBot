@@ -4,7 +4,7 @@ from sub.utils.visual.size import toHumanReadable
 
 SPACE = "         "
 
-def run(cmd: str, argv: list[str], hooks: feat_shutils.Hooks) -> int:
+def run(_: str, argv: list[str], hooks: feat_shutils.Hooks) -> int:
     match argv[1]:
         case "/info/sub/core/runtime/rdm":
             hooks.stdout.write(f"""

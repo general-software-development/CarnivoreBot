@@ -1,7 +1,5 @@
 import discord
 from unittest.mock import MagicMock, AsyncMock
-from typing import Any
-import types
 
 import random
 

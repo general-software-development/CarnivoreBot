@@ -1,11 +1,14 @@
-from ..log.logManager import getLogger
-from . import runtimeDataManager as RDM
+import time
+import asyncio
 from datetime import datetime, timedelta
 from typing import Any
-from ..log.logErrors import LogErrors
-from ..log.suppressErrors import SuppressErrors
 from threading import RLock
 import threading
+
+from ..log.logManager import getLogger
+from . import runtimeDataManager as RDM
+from ..log.logErrors import LogErrors
+from ..log.suppressErrors import SuppressErrors
 from .typeCheck import typecheck_simple
 
 ratelimit_commands = []
@@ -15,13 +18,13 @@ ratelimit_commands_lock = RLock()
 async def createRateLimit(command: str) -> None:
     with ratelimit_commands_lock:
         ratelimit_commands.append(command)
-    
+
     RDM.writeSubsystem(f"rateLimitManager:{command}", {})
 
 @typecheck_simple
-async def addRateLimit(target: str | int | Any, command: str, time: timedelta) -> None:
+async def addRateLimit(target: str | int | Any, command: str, totalTime: timedelta) -> None:
     with SuppressErrors(), LogErrors():
-        RDM.writeData(f"rateLimitManager:{command}", target, datetime.now() + time)
+        RDM.writeData(f"rateLimitManager:{command}", target, datetime.now() + totalTime)
 
 @typecheck_simple
 async def getRateLimit(target: str | int | Any, command: str) -> timedelta:
@@ -37,7 +40,7 @@ async def getRateLimit(target: str | int | Any, command: str) -> timedelta:
         timeLeft = targetTime - datetime.now() if targetTime > datetime.now() else 0
 
         return timeLeft
-    
+
     return timedelta()
 
 @typecheck_simple
@@ -48,14 +51,11 @@ async def refreshRateLimits(command: str) -> bool:
             for (identifier, targetTime) in ratelimits.items():
                 if datetime.now() >= targetTime:
                     RDM.popData(f"rateLimitManager:{command}", identifier)
-            
-            return True
-        
-    except Exception as e:
-        return False
 
-import time
-import asyncio
+            return True
+
+    except Exception:  # pylint: disable=broad-exception-caught
+        return False
 
 async def newThread():
     logger = getLogger("rateLimitManager")

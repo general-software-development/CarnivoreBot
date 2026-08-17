@@ -14,7 +14,7 @@ class TestReply:
         dcClient.discordLoop = asyncio.get_running_loop()
 
         isspam = PingPongCommand()
-        msg = DcMessage(f";ping")
+        msg = DcMessage(";ping")
 
         await isspam._onRunCommand(msg)
 
@@ -26,7 +26,7 @@ class TestReply:
         dcClient.discordLoop = asyncio.get_running_loop()
 
         isspam = PingPongCommand()
-        msg = DcMessage(f";ping")
+        msg = DcMessage(";ping")
 
         await isspam._onRunCommand(msg)
 
@@ -36,7 +36,7 @@ class TestReply:
 
         reply_text = msg.reply.await_args.args[0]
 
-        reply_text.startswith(f"You are being rate limited.")
+        reply_text.startswith("You are being rate limited.")
 
 class TestDelay:
     @pytest.mark.parametrize(["maxDelayMs"], [
@@ -54,7 +54,7 @@ class TestDelay:
         dcClient.discordLoop = asyncio.get_running_loop()
         
         isspam = PingPongCommand()
-        msg = DcMessage(f";ping")
+        msg = DcMessage(";ping")
 
         start = time.time()
         

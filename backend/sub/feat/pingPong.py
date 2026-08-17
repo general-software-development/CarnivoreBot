@@ -1,14 +1,10 @@
-from ..core.log import logManager
-from ..core.log.suppressErrors import SuppressErrors
+from datetime import timedelta
+from discord import Message
+
 from ..core.log.logErrors import LogErrors
-from ..core.starttime.assetManager import AssetManager
 from ..core.runtime import rateLimitManager
 from ..core.feat.featManager import start_feat, queuedFunctionAsync, detachAsync
 from ..core.dc import dcClient
-
-from datetime import datetime, timedelta
-
-from discord import Message
 
 class PingPongCommand:
     def __init__(self):
@@ -19,7 +15,7 @@ class PingPongCommand:
         detachAsync(self.onRunCommand.runForever())
 
     @queuedFunctionAsync()
-    async def onRunCommand(self, message: Message, *args) -> None:
+    async def onRunCommand(self, message: Message, *_) -> None:
         return await self._onRunCommand(message)
 
     async def _onRunCommand(self, message: Message) -> None:

@@ -19,11 +19,11 @@ class CachedProperty:
             object.__setattr__(instance, "_cached_property_uuid", uuid.uuid4())
             instance_uuid = getattr(instance, "_cached_property_uuid", None)
 
-        if (cached := RDM.readData(f"cache", f"{self.func.__qualname__} | {instance_uuid}")) is not None:
+        if (cached := RDM.readData("cache", f"{self.func.__qualname__} | {instance_uuid}")) is not None:
             return cached
 
         value = self.func(instance)
-        RDM.writeData(f"cache", f"{self.func.__qualname__} | {instance_uuid}", value)
+        RDM.writeData("cache", f"{self.func.__qualname__} | {instance_uuid}", value)
 
         return value
 

@@ -41,7 +41,7 @@ def detachAsync(cr: Coroutine) -> asyncio.Task:
     return loop.create_task(cr)
 
 def start_feat(name: str, target: type, daemon: bool = True) -> threading.Thread:
-    if sys._is_gil_enabled():
+    if sys._is_gil_enabled():  # pylint: disable=protected-access
         logger.warning("The GIL is enabled. This may result in lower multithreaded performance.")
 
     def wrapper():

@@ -24,3 +24,25 @@ compile-bytecode = true
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
+
+[tool.pylint.main]
+jobs = 0
+output-format = "colorized"
+
+[tool.pylint.messages_control]
+disable = [
+    "missing-docstring", "invalid-name", "logging-fstring-interpolation", "wrong-import-order", "global-variable-not-assigned", "global-statement", "broad-exception-caught",
+    "trailing-whitespace", "too-few-public-methods", "protected-access", "wrong-import-position"
+]
+
+[tool.pylint.format]
+max-line-length = 160
+
+[tool.pylint.design]
+max-attributes = 30
+max-returns = 12
+min-public-methods = 1
+
+[tool.pylint.classes]
+valid-metaclass-classmethod-first-arg = ["mcs", "mcls"]
+

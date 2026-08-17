@@ -1,9 +1,8 @@
-import shlex
-from sub.core.dc import dcClient
-from sub.feat.checkIsSpam import CheckIsSpamCommand, load_model
-from sub.tests.utils.mockDc import DcMessage
 import asyncio
 import pytest
+from sub.core.dc import dcClient
+from sub.feat.checkIsSpam import CheckIsSpamCommand
+from sub.tests.utils.mockDc import DcMessage
 
 @pytest.mark.parametrize(["messageContent"], [
     ["hey"],

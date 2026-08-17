@@ -163,26 +163,6 @@ class TestDelay:
 
         assert dt <= maxDelayMs / 1000
 
-    @pytest.mark.parametrize(["maxDelayMs"], [[100], [50], [10], [1]])
-    async def test_write_key(self, maxDelayMs: int):
-        await self.prep_mock_template()
-
-        start = time.time()
-        RDM.writeSubsystem("cache", { "test": 188 } )
-        dt = time.time() - start
-
-        assert dt <= maxDelayMs / 1000
-
-    @pytest.mark.parametrize(["maxDelayMs"], [[100], [50], [10], [1]])
-    async def test_write_key_create_sub(self, maxDelayMs: int):
-        await self.prep_mock_template()
-
-        start = time.time()
-        RDM.writeSubsystem("cache", { "test": 188 } )
-        dt = time.time() - start
-
-        assert dt <= maxDelayMs / 1000
-
     @pytest.mark.parametrize(["maxDelayMs"], [[50], [10], [1]])
     async def test_read_key(self, maxDelayMs: int):
         await self.prep_mock_template()

@@ -21,12 +21,13 @@ class GetEnvCommand(CommandABC):
     def __init__(self):
         dcClient.registerCommand("getEnv", self.onRunCommand)
         self.logger = getLogger("getEnv")
+        self.authedUsers = []
 
     async def init(self):
         try:
             self.authedUsers = AssetManager.config.Bot.Command.getEnv.AuthedUsers
         except AttributeError:
-            self.authedUsers = []
+            pass
 
         detachAsync(self.onRunCommand.runForever())
 

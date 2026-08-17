@@ -11,10 +11,11 @@ def toHumanReadable(no_bytes: int) -> str:
 
         if tmpsize <= 10 and no_bytes <= 64 * 1024 * 1024:  # 64MB
             return round(tmpsize, 2)
-        elif tmpsize <= 10:
+
+        if tmpsize <= 10:
             return round(tmpsize, 1)
-        else:
-            return int(tmpsize)
+
+        return int(tmpsize)
 
     size = float(no_bytes)
     for unit in units:

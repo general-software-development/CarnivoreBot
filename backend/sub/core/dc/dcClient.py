@@ -4,7 +4,7 @@ from ..log.logErrors import LogErrors
 from ..log.suppressErrors import SuppressErrors
 from ..starttime.assetManager import AssetManager
 from ..runtime.typeCheck import typecheck_simple, typecheck_complex
-from typing import Callable, Coroutine, Literal
+from typing import Callable, Literal
 import asyncio as aio
 from collections.abc import Coroutine
 import shlex
@@ -28,7 +28,7 @@ async def startClient(cl: discord.Client, token: str):
 
     client.event(on_ready)
     client.event(on_message)
-    
+
     with LogErrors('dcClient', True):
         logger.debug("Starting bot...")
         await client.start(token)
@@ -47,14 +47,14 @@ async def on_message(message: discord.Message):
                 if await listener(message):
                     success = True
 
-    if success == False:
+    if not success:
         pass
 
 @fnTypes.private
 def shlexSplit(msg: str) -> list[str]:
     try:
         return shlex.split(msg, False, True)
-    except:
+    except Exception:
         return msg.split(" ")
 
 @fnTypes.internal
@@ -78,16 +78,16 @@ def registerCommand(cmd: str, handler: Callable[[discord.Message, list[str]], Co
 
     async def wrapper(message: discord.Message):
         prefix = AssetManager.settings['Discord']['Command']['Prefix'] if includePrefix else ''
-        
+
         if not isCommand(message.content, cmd, prefix):
             return False
-        
+
         #logger.debug(f"Command {prefix}{cmd} was called: '{message.content}'")
 
         await handler(message, shlexSplit(message.content))
 
         return True
-        
+
     listeners['onMessage'].append(wrapper)
 
 @fnTypes.public

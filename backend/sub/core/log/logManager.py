@@ -1,11 +1,11 @@
 import logging
-import colorama
 from datetime import datetime
+import colorama
 
-logging.getLogger("werkzeug").setLevel(logging.ERROR);
+logging.getLogger("werkzeug").setLevel(logging.ERROR)
 
 SUCCESS = 25
-logging.addLevelName(SUCCESS, "SUCCESS");
+logging.addLevelName(SUCCESS, "SUCCESS")
 
 class ColorFormatter(logging.Formatter):
     COLORS = {
@@ -41,13 +41,20 @@ class ColorFormatter(logging.Formatter):
         )
 
         if record.exc_info:
-            output += f"\n {colorama.Style.RESET_ALL}{colorama.Style.DIM}#{color}{colorama.Style.NORMAL} " + self.formatException(record.exc_info).replace('\n', f"\n {colorama.Style.RESET_ALL}{colorama.Style.DIM}#{color}{colorama.Style.NORMAL} ")
+            output += (
+                f"\n {colorama.Style.RESET_ALL}{colorama.Style.DIM}#{color}{colorama.Style.NORMAL} "
+                + self.formatException(record.exc_info)
+                    .replace('\n', f"\n {colorama.Style.RESET_ALL}{colorama.Style.DIM}#{color}{colorama.Style.NORMAL} ")
+            )
 
         if record.stack_info:
-            output += f"\n {colorama.Style.RESET_ALL}{colorama.Style.DIM}#{colorama.Style.RESET_ALL} " + self.formatStack(record.stack_info).replace('\n', f"\n {colorama.Style.DIM}#{colorama.Style.RESET_ALL} ")
+            output += (
+                f"\n {colorama.Style.RESET_ALL}{colorama.Style.DIM}#{colorama.Style.RESET_ALL} "
+                + self.formatStack(record.stack_info).replace('\n', f"\n {colorama.Style.DIM}#{colorama.Style.RESET_ALL} ")
+            )
 
         return output
-    
+
 def getLogger(name: str) -> logging.Logger:
     if not name:
         print("???")
@@ -62,7 +69,7 @@ def getLogger(name: str) -> logging.Logger:
 
     def success(message, *args, **kwargs):
         if logger.isEnabledFor(SUCCESS):
-            logger._log(SUCCESS, message, args, **kwargs)
+            logger._log(SUCCESS, message, args, **kwargs) # pylint: disable=protected-access
 
     logger.success = success
     logger.propagate = False
