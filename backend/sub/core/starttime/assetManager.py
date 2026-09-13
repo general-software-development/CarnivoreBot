@@ -11,6 +11,7 @@ logger = logManager.getLogger("assetManager")
 
 @dataclass(slots=True, frozen=True)
 class PathsAsset:
+    rootPath: pathlib.Path
     backend: pathlib.Path
     sub: pathlib.Path
     core: pathlib.Path
@@ -20,8 +21,7 @@ class PathsAsset:
     abstract: pathlib.Path
     subcode: pathlib.Path
 
-@lambda _: _()
-class AssetManager:
+class _AssetManagerT:
     def __init__(self):
         logger.info('Initialising...')
         self.rootPath = pathlib.Path(__file__).parent.parent.parent.parent.parent
@@ -48,6 +48,7 @@ class AssetManager:
     @CachedProperty
     def paths(self) -> PathsAsset:
         return PathsAsset(
+            rootPath = self.rootPath,
             backend = self.rootPath / "backend",
             sub = self.rootPath / "backend" / "sub",
             core = self.rootPath / "backend" / "sub" / "core",
@@ -86,3 +87,5 @@ class AssetManager:
         cfg = to_cfg(settings)
 
         return cfg
+
+AssetManager = _AssetManagerT()

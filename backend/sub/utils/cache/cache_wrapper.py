@@ -1,17 +1,25 @@
 from sub.core.runtime import runtimeDataManager as RDM
 
-from typing import Callable, Any
+from typing import Callable, Any, overload
 import uuid
 
 from beartype import beartype
 
-class CachedProperty:
+class CachedProperty[T, R]:
     @beartype
-    def __init__(self, func: Callable) -> None:
+    def __init__(self, func: Callable[[T], R]) -> None:
         self.func = func
         self.__doc__ = func.__doc__
 
-    def __get__(self, instance: object | None, owner) -> Any:
+    @overload
+    def __get__(self, instance: None, owner: type[T]) -> "CachedProperty[T, R]":
+        ...
+
+    @overload
+    def __get__(self, instance: T, owner: type[T] | None = None) -> R:
+        ...
+
+    def __get__(self, instance: T | None, owner: type[T] | None = None) -> R | "CachedProperty[T, R]":
         if instance is None:
             return self
 
