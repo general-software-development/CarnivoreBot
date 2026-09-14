@@ -1,19 +1,38 @@
-from typing import Literal
 from sub.core.starttime.assetManager import AssetManager
-from pathlib import Path
-import sqlite3
+from sqlalchemy import create_engine
+from sqlalchemy.orm import Session
+
+target_path = AssetManager.paths.rootPath / ".data" / "latest.sqlite3.db"
+target_path.parent.mkdir(parents=True, exist_ok=True)
+engine = create_engine(f"sqlite:///{target_path}")
 
 class PersistentDataManager:
-    def __init__(self, subsystem: str):
-        target_path = AssetManager.paths.rootPath / ".data" / (subsystem + ".sql3.db")
-        target_path.parent.mkdir(parents=True, exist_ok=True)
+    def __init__(self):
+        self._conn = engine.connect()
+        self._session = Session(bind=self._conn)
 
-        self._conn = sqlite3.connect(target_path, isolation_level=None)
-        self._cursor = self._conn.cursor()
+    def __enter__(self):
+        return self
 
-    def begin(self, mode: Literal["DEFERRED", "IMMEDIATE", "EXCLUSIVE"] = 'IMMEDIATE') -> sqlite3.Cursor:
-        self._cursor.execute(f"BEGIN {mode};")
-        return self._cursor
+    def __exit__(self, exc_type, exc, tb):
+        if exc_type is None:
+            self.commit()
+        else:
+            self.rollback()
+        self.close()
+
+    @property
+    def session(self):
+        return self._session
 
     def commit(self):
-        self._conn.commit()
+        self._session.commit()
+
+    def rollback(self):
+        self._session.rollback()
+
+    def close(self, commit: bool = False):
+        if commit:
+            self.commit()
+        self._session.close()
+        self._conn.close()

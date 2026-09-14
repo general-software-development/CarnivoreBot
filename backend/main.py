@@ -12,6 +12,7 @@ configHandler.setConfig(AssetManager.config)
 from sub.feat import pingPong
 from sub.feat import checkIsSpam
 from sub.feat import getEnv
+from sub.feat import githubIssueMention
 from sub.feat.shellcmd import shellcmd
 
 from sub.core.starttime import mainThread
@@ -36,6 +37,7 @@ async def main():
     checkIsSpam.InitialiseCheckIsSpamCommand()
     getEnv.InitialiseGetEnvCommand()
     shellcmd.InitShellCmd()
+    githubIssueMention.InitialiseGithubIssueMention()
 
     await startClient(bot, AssetManager.settings['Discord']['App']['Auth']['AuthToken'])
 
