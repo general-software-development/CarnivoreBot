@@ -112,7 +112,7 @@ class ServerConfigManager:
         with PersistentDataManager() as db:
             if not key:
                 results = list(db.session.scalars(
-                    sqla.select(ServerConfig)
+                    sqla.select(ServerConfig).where(ServerConfig.server_id == message.guild.id)
                 ).all())
 
                 answer = ""
@@ -121,6 +121,13 @@ class ServerConfigManager:
                     answer += f"**{item.key_name}** = `{item.value}`"
 
                 await dcClient.runDiscord(message.reply(answer))
+
+            else:
+                results = db.session.scalars(
+                                    sqla.select(ServerConfig).where(ServerConfig.server_id == message.guild.id).where(ServerConfig.key_name == key)
+                ).first()
+
+                await dcClient.runDiscord(message.reply(f"**{results.key_name}** = `{results.value}`"))
 
 def InitialiseServerConfigManager():
     start_feat("ServerConfigManager", ServerConfigManager)
