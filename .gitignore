@@ -17,3 +17,8 @@ uv.lock
 
 # huggingface
 .cache
+
+# Large Artifacts
+.data/
+*.db
+*.sqlite*
