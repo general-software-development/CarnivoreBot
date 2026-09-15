@@ -8,6 +8,7 @@ from ..core.log.logErrors import LogErrors
 from ..core.runtime import rateLimitManager
 from ..core.feat.featManager import start_feat, queuedFunctionAsync, detachAsync
 from ..core.dc import dcClient
+from .serverConfig import getServerSettingValue
 
 class GithubIssueMentionFeat:
     def __init__(self):
@@ -22,13 +23,16 @@ class GithubIssueMentionFeat:
         return await self._onRunCommand(message)
 
     async def _onRunCommand(self, message: Message) -> None:
+        repo_name = await getServerSettingValue(message.guild.id, "gh.repo-name")
+        repo_owner = await getServerSettingValue(message.guild.id, "gh.repo-owner")
+
         for word in message.content.split():
             tokens = word.split("#", maxsplit=1)
 
             if len(tokens) > 1:
                 if tokens[1].isnumeric():
                     identifier = int(tokens[1])
-                    github_url = "https://api.github.com/repos/NotValra/RoValra/"  # Test URL  # TODO: Use presistantDataManager for this
+                    github_url = f"https://api.github.com/repos/{repo_owner}/{repo_name}/"
 
                     issue_url = github_url + "issues/" + str(identifier)
 

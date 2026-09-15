@@ -1,8 +1,6 @@
 from datetime import timedelta
 from discord import Message
-import discord
-import httpx
-import pprint
+from typing import Any
 
 from ..core.log.logErrors import LogErrors
 from ..core.runtime import rateLimitManager
@@ -30,21 +28,44 @@ class ServerConfig(SQLServerConfigBase):
     key_name: orm.Mapped[str] = orm.mapped_column(sqla.String(50), nullable=False)
     value: orm.Mapped[str] = orm.mapped_column(sqla.String(500), nullable=True)
 
+from typing import Literal, TypeAlias, get_args
+
+AllowedKey: TypeAlias = Literal[
+    "gh.repo-owner",
+    "gh.repo-name",
+]
+
+_allowed_keys = set(get_args(AllowedKey))
+
+async def getServerSettingValue(guild_id: int, key: AllowedKey) -> ServerConfig:
+    with PersistentDataManager() as db:
+        results = db.session.scalars(
+            sqla.select(ServerConfig).where(ServerConfig.server_id == guild_id).where(ServerConfig.key_name == key)
+        ).first()
+
+        return results
+
+async def getServerSettings(guild_id: int) -> list[ServerConfig]:
+    with PersistentDataManager() as db:
+        results = db.session.scalars(
+            sqla.select(ServerConfig).where(ServerConfig.server_id == guild_id)
+        ).all()
+
+        return list(results)
+
 class ServerConfigManager:
     def __init__(self):
         dcClient.registerCommand("config.set", self.onRunSetCommand)
         dcClient.registerCommand("config.get", self.onRunGetCommand)
         self.logger = getLogger("feat:serverConfigManager")
-        self.allowed_keys = {
-            "gh.repo-owner",
-            "gh.repo-name"
-        }
+        self.allowed_keys = _allowed_keys
 
     async def init(self):
         with PersistentDataManager() as db:
             SQLServerConfigBase.metadata.create_all(db.session.get_bind())
 
         detachAsync(self.onRunSetCommand.runForever())
+        detachAsync(self.onRunGetCommand.runForever())
 
     @queuedFunctionAsync()
     async def onRunSetCommand(self, message: Message, cmd: Iterable[str]) -> None:
@@ -52,8 +73,7 @@ class ServerConfigManager:
 
     @queuedFunctionAsync()
     async def onRunGetCommand(self, message: Message, cmd: Iterable[str]) -> None:
-        #return await self._onRunGetCommand(message)
-        return
+        return await self._onRunGetCommand(message, cmd)
 
     async def _onRunSetCommand(self, message: Message, cmd: Iterable[str]) -> None:
         key = cmd[1]
@@ -109,25 +129,17 @@ class ServerConfigManager:
     async def _onRunGetCommand(self, message: Message, cmd: Iterable[str]) -> None:
         key = cmd[1] if len(cmd) >= 2 else None
 
-        with PersistentDataManager() as db:
-            if not key:
-                results = list(db.session.scalars(
-                    sqla.select(ServerConfig).where(ServerConfig.server_id == message.guild.id)
-                ).all())
+        if not key:
+            results = await getServerSettings(message.guild.id)
+            answer = ""
 
-                answer = ""
+            for item in results:
+                answer += f"**{item.key_name}** = `{item.value}`\n"
 
-                for item in results:
-                    answer += f"**{item.key_name}** = `{item.value}`"
-
-                await dcClient.runDiscord(message.reply(answer))
-
-            else:
-                results = db.session.scalars(
-                                    sqla.select(ServerConfig).where(ServerConfig.server_id == message.guild.id).where(ServerConfig.key_name == key)
-                ).first()
-
-                await dcClient.runDiscord(message.reply(f"**{results.key_name}** = `{results.value}`"))
+            await dcClient.runDiscord(message.reply(answer))
+        else:
+            results = await getServerSettingValue(message.guild.id, key)
+            await dcClient.runDiscord(message.reply(f"**{results.key_name}** = `{results.value}`"))
 
 def InitialiseServerConfigManager():
     start_feat("ServerConfigManager", ServerConfigManager)
