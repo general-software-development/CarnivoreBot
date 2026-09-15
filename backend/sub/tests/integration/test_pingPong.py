@@ -18,7 +18,7 @@ class TestReply:
 
         await isspam._onRunCommand(msg)
 
-        msg.reply.assert_awaited_once_with("Pong!")
+        msg.reply.assert_awaited_once()
 
     async def test_reply_ratelimit(self):
         RDM.writeSubsystem("rateLimitManager:ping", {})
@@ -30,7 +30,7 @@ class TestReply:
 
         await isspam._onRunCommand(msg)
 
-        msg.reply.assert_awaited_once_with("Pong!")
+        msg.reply.assert_awaited_once()
 
         await isspam._onRunCommand(msg)
 

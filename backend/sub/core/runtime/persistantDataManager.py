@@ -7,9 +7,9 @@ target_path.parent.mkdir(parents=True, exist_ok=True)
 engine = create_engine(f"sqlite:///{target_path}")
 
 class PersistentDataManager:
-    def __init__(self):
+    def __init__(self, expire_on_commit: bool = False):
         self._conn = engine.connect()
-        self._session = Session(bind=self._conn)
+        self._session = Session(bind=self._conn, expire_on_commit=expire_on_commit)
 
     def __enter__(self):
         return self

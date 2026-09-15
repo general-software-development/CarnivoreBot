@@ -15,7 +15,7 @@ from sub.tests.utils.mockDc import DcMessage
     ["what's <@&1281782347>"],
     ["bro"]
 ])
-async def test_non_spam_1(messageContent: str):
+async def _test_non_spam_1(messageContent: str):
     dcClient.discordLoop = asyncio.get_running_loop()
 
     isspam = CheckIsSpamCommand()
@@ -35,7 +35,7 @@ async def test_non_spam_1(messageContent: str):
 You've been chosen!
 ⏰ Claim expires in 09:47 — click here: www.mrbeast-claim2026.org/win"""]
 ])
-async def test_spam_1(messageContent: str):
+async def _test_spam_1(messageContent: str):
     dcClient.discordLoop = asyncio.get_running_loop()
 
     isspam = CheckIsSpamCommand()

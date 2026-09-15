@@ -3,6 +3,7 @@ from discord import Message
 import discord
 import httpx
 import pprint
+import json
 
 from ..core.log.logErrors import LogErrors
 from ..core.runtime import rateLimitManager
@@ -26,13 +27,13 @@ class GithubIssueMentionFeat:
         repo_name = await getServerSettingValue(message.guild.id, "gh.repo-name")
         repo_owner = await getServerSettingValue(message.guild.id, "gh.repo-owner")
 
-        for word in message.content.split():
+        for word in message.content.replace("(", " ").replace(")", " ").replace(".", " ").replace(",", " ").split():
             tokens = word.split("#", maxsplit=1)
 
             if len(tokens) > 1:
                 if tokens[1].isnumeric():
                     identifier = int(tokens[1])
-                    github_url = f"https://api.github.com/repos/{repo_owner}/{repo_name}/"
+                    github_url = f"https://api.github.com/repos/{json.loads(repo_owner.value)}/{json.loads(repo_name.value)}/"
 
                     issue_url = github_url + "issues/" + str(identifier)
 
@@ -51,9 +52,7 @@ class GithubIssueMentionFeat:
                         response.raise_for_status()
 
                         data: dict = response.json()
-
-                        pprint.pprint(data)
-
+                        
                         issue_title = data['title']
                         issue_body = data['body'] or ''
                         is_pull_request = "pull_request" in data.keys()
