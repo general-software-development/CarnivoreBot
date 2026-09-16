@@ -1,5 +1,9 @@
 # CarnivoreBot License
 
+Last modified: 16th September, 2026
+
+Identifier: `01a0ab72-42ea-77e8-bfb8-eff78819afdf:497b520b-8624-4f4c-bf05-dac846dc9a2f:SHA3-512-Kxal&t0w8Ezu~)u7mijViE_&|7(~C9C$zlv4x7z2*5yR7OA_%lQn1kU7E#IR@_YUXdSLBh<q$?UM&BDp`
+
 ## 0. Definitions
 Article 1.  "Derivative Work" is defined as any material or assets incorporating any part of The Project
 
