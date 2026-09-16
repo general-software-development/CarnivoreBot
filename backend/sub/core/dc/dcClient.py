@@ -10,6 +10,7 @@ from collections.abc import Coroutine
 import shlex
 from ..starttime.mainThread import mainLoop
 from sub.code import fnTypes
+from sub.core.runtime.errors import BotError
 
 logger = getLogger("dcClient")
 
@@ -84,7 +85,12 @@ def registerCommand(cmd: str, handler: Callable[[discord.Message, list[str]], Co
 
         #logger.debug(f"Command {prefix}{cmd} was called: '{message.content}'")
 
-        await handler(message, shlexSplit(message.content))
+        try:
+            await handler(message, shlexSplit(message.content))
+        except Exception as e:
+            logger.exception(e)
+            err = BotError("-1 Internal Error", description=str(e))
+            await runDiscord(message.reply(err.to_dc()))
 
         return True
 

@@ -8,6 +8,7 @@ from ..core.dc import dcClient
 from sub.core.runtime.persistantDataManager import PersistentDataManager
 from sub.core.starttime.assetManager import AssetManager
 from sub.core.log.logManager import getLogger
+from sub.core.runtime.permissions import Permissions as Perms, SpecificFilter
 from typing import Iterable
 import json
 
@@ -58,6 +59,13 @@ class ServerConfigManager:
         dcClient.registerCommand("config.get", self.onRunGetCommand)
         self.logger = getLogger("feat:serverConfigManager")
         self.allowed_keys = _allowed_keys
+        self.filter = SpecificFilter(
+            owner = Perms.RWX,
+            admin = Perms.RWX,
+            guild_manager=Perms.RWX,
+            bot_dev=Perms.RWX,
+            others=Perms.RX,
+        )
 
     async def init(self):
         with PersistentDataManager() as db:
@@ -79,6 +87,16 @@ class ServerConfigManager:
         value: str = cmd[2] if len(cmd) >= 3 else None
         flags = set(cmd[3:])
 
+        author = message.author
+
+        err = self.filter.verify(message, Perms.RWX, "+debug" in flags)
+        if err:
+            err.description = "Missing required permissions: **Administrator** or **Manage Server** / **Manage Guild**."
+            err.details = f"Command config.set; Executed by @{author.global_name} (<@{author.id}>)"
+            await dcClient.runDiscord(message.reply(err.to_dc()))
+            self.logger.debug(err.to_log())
+            return
+
         if value is None or value == "":
             value = None
         elif value.isnumeric():
@@ -94,55 +112,36 @@ class ServerConfigManager:
         if value in {"False", 'false'}: value = False
 
         value: int | str | float | bool | None = value
-        
-        author = message.author
-
-        has_perms = author.guild_permissions.administrator or author.guild_permissions.manage_guild
-
-        if not has_perms:
-            if not ("+debug" in flags and author.id in AssetManager.config.Bot.Admins.Users):
-                err = BotError(
-                    "1 No Access (W)",
-                    "Missing required permissions: **Administrator** or **Manage Server** / **Manage Guild**.",
-                    f"Command config.set; Executed by @{author.global_name} (<@{author.id}>)"
-                )
-                await dcClient.runDiscord(message.reply(err.to_dc()))
-                self.logger.debug(err.to_log())
-                return
 
         if key not in self.allowed_keys:
             await dcClient.runDiscord(message.reply(f"Invalid key. Allowed keys are: `{'`, `'.join(self.allowed_keys)}`"))
             return
 
-        try:
-            with PersistentDataManager() as db:
-                result = db.session.scalars(
-                    sqla.select(ServerConfig).where(ServerConfig.server_id == message.guild.id).where(ServerConfig.key_name == key)
-                ).first()
+        with PersistentDataManager() as db:
+            result = db.session.scalars(
+                sqla.select(ServerConfig).where(ServerConfig.server_id == message.guild.id).where(ServerConfig.key_name == key)
+            ).first()
 
-                if result:
-                    if value is None:
-                        self.logger.debug(f"[Server {message.guild.id}]: Deleting {key}; setting to `{json.dumps(value)}`")
-                        db.session.delete(result)
-                        await dcClient.runDiscord(message.reply(f"Deleted setting {result.key_name}.\n-# 0 OK"))
-                    else:
-                        self.logger.debug(f"[Server {message.guild.id}]: Mutating {key} to `{json.dumps(value)}`")
-                        result.value = json.dumps(value)
-                        await dcClient.runDiscord(message.reply(f"Mutated setting {result.key_name} to `{json.dumps(value)}`.\n-# 200 OK"))
+            if result:
+                if value is None:
+                    self.logger.debug(f"[Server {message.guild.id}]: Deleting {key}; setting to `{json.dumps(value)}`")
+                    db.session.delete(result)
+                    await dcClient.runDiscord(message.reply(f"Deleted setting {result.key_name}.\n-# {err.status_code}"))
                 else:
-                    self.logger.debug(f"[Server {message.guild.id}]: Adding {key} = {json.dumps(value)}")
+                    self.logger.debug(f"[Server {message.guild.id}]: Mutating {key} to `{json.dumps(value)}`")
+                    result.value = json.dumps(value)
+                    await dcClient.runDiscord(message.reply(f"Mutated setting {result.key_name} to `{json.dumps(value)}`.\n-# {err.status_code}"))
+            else:
+                self.logger.debug(f"[Server {message.guild.id}]: Adding {key} = {json.dumps(value)}")
+                setting = ServerConfig(
+                    server_id = message.guild.id,
+                    key_name = key,
+                    value = json.dumps(value)
+                )
 
-                    setting = ServerConfig(
-                        server_id = message.guild.id,
-                        key_name = key,
-                        value = json.dumps(value)
-                    )
-                    db.session.add(setting)
+                db.session.add(setting)
 
-                    await dcClient.runDiscord(message.reply(f"Created setting {key} = `{json.dumps(value)}`.\n-# 200 OK"))
-        except Exception as e:
-            await dcClient.runDiscord(message.reply(f"Failed to execute.\n-# 1 {type(e)}: {str(e)}"))
-            self.logger.error("An unknown error occured", exc_info=True)
+                await dcClient.runDiscord(message.reply(f"Created setting {key} = `{json.dumps(value)}`.\n-# {err.status_code}"))
 
     async def _onRunGetCommand(self, message: Message, cmd: Iterable[str]) -> None:
         key = cmd[1] if len(cmd) >= 2 else None
