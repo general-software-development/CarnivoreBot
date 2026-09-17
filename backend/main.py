@@ -15,6 +15,7 @@ from sub.feat import getEnv
 from sub.feat import githubIssueMention
 from sub.feat.shellcmd import shellcmd
 from sub.feat import serverConfig
+from sub.feat import legal
 
 from sub.core.starttime import mainThread
 
@@ -40,6 +41,7 @@ async def main():
     shellcmd.InitShellCmd()
     githubIssueMention.InitialiseGithubIssueMention()
     serverConfig.InitialiseServerConfigManager()
+    legal.InitialiseGetLegalDocument()
 
     await startClient(bot, AssetManager.settings['Discord']['App']['Auth']['AuthToken'])
 

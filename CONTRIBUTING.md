@@ -2,6 +2,14 @@
 
 ## 1. Development
 
+### Preparing Dependencies
+
+```bash
+uv sync
+```
+
+Note: you need `typst` installed.
+
 ### Starting the bot
 To start the bot, simply run: 
 ```bash
