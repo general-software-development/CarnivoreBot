@@ -65,7 +65,7 @@ async def newThread():
 
         with ratelimit_commands_lock:
             for name in ratelimit_commands:
-                logger.debug(f"Refreshing rate limits for: '{name}'")
+                #logger.debug(f"Refreshing rate limits for: '{name}'")
                 await refreshRateLimits(name)
 
 if threading.current_thread() is threading.main_thread():

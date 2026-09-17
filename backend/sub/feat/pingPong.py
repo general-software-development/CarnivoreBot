@@ -63,7 +63,7 @@ class PingPongCommand:
             )
         )
 
-        await rateLimitManager.addRateLimit(userId, "ping", timedelta(seconds=2))
+        await rateLimitManager.addRateLimit(userId, "ping", timedelta(seconds=5))
 
 def InitialisePingPongCommand():
     start_feat("PingPong", PingPongCommand)

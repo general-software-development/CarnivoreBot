@@ -9,6 +9,7 @@ from sub.core.runtime.persistantDataManager import PersistentDataManager
 from sub.core.starttime.assetManager import AssetManager
 from sub.core.log.logManager import getLogger
 from sub.core.runtime.permissions import Permissions as Perms, SpecificFilter
+from sub.feat.gdpr import GDPRConsent_ServerConfig
 from typing import Iterable
 import json
 
@@ -60,11 +61,11 @@ class ServerConfigManager:
         self.logger = getLogger("feat:serverConfigManager")
         self.allowed_keys = _allowed_keys
         self.filter = SpecificFilter(
-            owner = Perms.RWX,
-            admin = Perms.RWX,
-            guild_manager=Perms.RWX,
-            bot_dev=Perms.RWX,
-            others=Perms.RX,
+            owner = Perms.W,
+            admin = Perms.W,
+            guild_manager=Perms.W,
+            bot_dev=Perms.W,
+            all_users=Perms.RX,
         )
 
     async def init(self):
@@ -83,6 +84,21 @@ class ServerConfigManager:
         return await self._onRunGetCommand(message, cmd)
 
     async def _onRunSetCommand(self, message: Message, cmd: Iterable[str]) -> None:
+        with PersistentDataManager() as db:
+            consent = db.session.scalars(
+                sqla.select(GDPRConsent_ServerConfig).where(GDPRConsent_ServerConfig.server_id == message.guild.id)
+            ).first()
+
+            if consent is None:
+                await dcClient.runDiscord(
+                    message.reply(
+                        "Please consent to the collection/retention of the **Server Data > Server Configurations** data category"
+                        "if you are the owner of the server, else ask the owner of the server to do so:\n"
+                        "```\n;gdpr consent add server-settings\n```"
+                    )
+                )
+                return
+
         key = cmd[1]
         value: str = cmd[2] if len(cmd) >= 3 else None
         flags = set(cmd[3:])
@@ -144,6 +160,21 @@ class ServerConfigManager:
                 await dcClient.runDiscord(message.reply(f"Created setting {key} = `{json.dumps(value)}`.\n-# {err.status_code}"))
 
     async def _onRunGetCommand(self, message: Message, cmd: Iterable[str]) -> None:
+        with PersistentDataManager() as db:
+            consent = db.session.scalars(
+                sqla.select(GDPRConsent_ServerConfig).where(GDPRConsent_ServerConfig.server_id == message.guild.id)
+            ).first()
+
+            if consent is None:
+                await dcClient.runDiscord(
+                    message.reply(
+                        "Please consent to the collection/retention of the **Server Data > Server Configurations** data category"
+                        "if you are the owner of the server, else ask the owner of the server to do so:\n"
+                        "```\n;gdpr consent add server-settings\n```"
+                    )
+                )
+                return
+
         key = cmd[1] if len(cmd) >= 2 else None
 
         if not key:

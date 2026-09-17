@@ -1,8 +1,8 @@
 # CarnivoreBot Privacy Policy
 
-Last modified: 16th September 2026
+Last modified: 17th September, 2026
 
-Identifier: `01a0ab71-9b73-700d-8c4c-522cb6dafdb5:8ee1fb30-c372-4fae-b85f-cfb9d87e36a0:SHA3-512-(Zx6PI+Sak{;o7Lnc99msY2!Lh(O&I=EXD8=Pk8yRp2)^<q@(+vXM577Q?JRse1#;7qFlXW^ajr7*m+i`
+Identifier: `01a0b08c-63e3-774e-ae74-fa7474f5ad1f:1b51f6d5-a427-4da4-9381-902048c45af1:SHA3-512-+{5+&BfFd!9(eH#PF6&4yN&j_*Fj&Im4rC.+N.b~U-vw+*h%R=0Vybb9J}{)dn6Lq*h44dK=(EiG{;r#`
 
 Controller: GitHub user `bogdan-glitchm` (see Contact)
 
@@ -55,7 +55,7 @@ The data we collect:
 
 | Data | Details | Reason/Purpose | Legal Basis |
 | :--: | :-----: | :----: | :---: |
-| Server Settings | &mdash; | Core bot behaviour and configuration | Legitimate Interest |
+| Server Configurations | &mdash; | Core bot behaviour and configuration | Legitimate Interest |
 | Channel ID | Where messages are sent | Core bot behaviour | Legitimate Interest |
 | Guild ID | &mdash; | Core bot behaviour | Legitimate Interest |
 | Guild owner ID | &mdash; | Bot permission systems | Legitimate Interest |
@@ -75,11 +75,11 @@ The data we collect:
 
 | Data | Retention | Contents | Legal Basis |
 | :--: | :-------: | :-----: | :---------: |
-| Server Settings | Indefinite, until deleted | *N/A* | Consent (consented to when using the `config.set` command) |
+| Server Configurations | Indefinite, until deleted | *N/A* | Consent (consented to when using the `config.set` command) |
 | Server Identification | Temporary/Unknown (transient in-memory usage, library caches) | Guild ID, Channel IDs | Legitimate Interest |
 | Server Ownership | Temporary/Unknown (transient in-memory usage, library caches) | Guild owner's user ID | Legitimate Interest |
 
-* **Server Settings:** To delete a setting, run `config.set <setting>` without specifying a value. This will delete it from the database. This is designed both as a way of deleting settings, and as a mechanism for withdrawal of consent.
+* **Server Configurations:** To delete a setting, run `config.set <setting>` without specifying a value. This will delete it from the database. This is designed both as a way of deleting settings, and as a mechanism for withdrawal of consent.
 
 ## Children's Data & Child Safety
 

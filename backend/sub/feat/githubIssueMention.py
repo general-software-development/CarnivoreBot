@@ -27,7 +27,7 @@ class GithubIssueMentionFeat:
         repo_name = await getServerSettingValue(message.guild.id, "gh.repo-name")
         repo_owner = await getServerSettingValue(message.guild.id, "gh.repo-owner")
 
-        for word in message.content.replace("(", " ").replace(")", " ").replace(".", " ").replace(",", " ").split():
+        for word in message.content.replace("(", " ").replace(")", " ").replace(".", " ").replace(",", " ").strip("?!").split():
             tokens = word.split("#", maxsplit=1)
 
             if len(tokens) > 1:

@@ -16,6 +16,7 @@ from sub.feat import githubIssueMention
 from sub.feat.shellcmd import shellcmd
 from sub.feat import serverConfig
 from sub.feat import legal
+from sub.feat import gdpr
 
 from sub.core.starttime import mainThread
 
@@ -42,6 +43,7 @@ async def main():
     githubIssueMention.InitialiseGithubIssueMention()
     serverConfig.InitialiseServerConfigManager()
     legal.InitialiseGetLegalDocument()
+    gdpr.InitialiseGDPRCommand()
 
     await startClient(bot, AssetManager.settings['Discord']['App']['Auth']['AuthToken'])
 
