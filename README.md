@@ -35,6 +35,9 @@ The `;gdpr consent {add|withdraw} <category>` command is used to handle providin
 
 The available `<category>` values are: `server-settings`.
 
+> [!WARNING]
+> Withdrawing consent to the `server-settings` data category will delete ALL configuration values for the current server.
+
 ## CheckIsSpam Command
 
 > [!ERROR]

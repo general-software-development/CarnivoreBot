@@ -7,6 +7,7 @@ from ..core.runtime import rateLimitManager
 from ..core.feat.featManager import start_feat, queuedFunctionAsync, detachAsync
 from ..core.dc import dcClient
 from ..core.runtime.persistantDataManager import PersistentDataManager
+from .sql.sql_serverConfig import ServerConfig
 import sqlalchemy as sqla
 import time
 from sqlalchemy.orm import DeclarativeBase
@@ -107,6 +108,10 @@ class GDPRCommand:
                                         return
 
                                     db.session.delete(consent)
+
+                                    server_settings = db.session.scalars(sqla.select(ServerConfig).where(ServerConfig.server_id == message.guild.id)).all()
+                                    for item in server_settings:
+                                        db.session.delete(item)
 
                                     await dcClient.runDiscord(message.reply(f"Successfully withdrew consent to the **Server Data > Server Configurations** category collection/retention. (see [Privacy Policy](<https://github.com/general-software-development/CarnivoreBot/blob/main/PrivacyPolicy.md>))"))
 
