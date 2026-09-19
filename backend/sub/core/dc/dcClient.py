@@ -10,7 +10,7 @@ from collections.abc import Coroutine
 import shlex
 from ..starttime.mainThread import mainLoop
 from sub.code import fnTypes
-from sub.core.runtime.errors import BotError
+from sub.core.err.errors import BotError
 
 logger = getLogger("dcClient")
 

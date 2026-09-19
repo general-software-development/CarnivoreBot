@@ -5,6 +5,8 @@ import functools as fntools
 import queue
 from typing import Callable
 from ..log import logManager
+from ..log.logErrors import LogErrors
+from ..log.suppressErrors import SuppressErrors
 import asyncio
 from threading import RLock
 
@@ -50,7 +52,9 @@ def start_feat(name: str, target: type, daemon: bool = True) -> threading.Thread
 
         l = logManager.getLogger("featManagerWrapper")
         l.info("Initialising")
-        feat = target()
+
+        with SuppressErrors(), LogErrors(f"featManager:{name}", True):
+            feat = target()
 
         loop.create_task(feat.init())
 

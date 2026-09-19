@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from typing import Iterable
 from discord import Message
-from sub.core.runtime.errors import BotError
+from sub.core.err.errors import BotError
 from sub.core.starttime.assetManager import AssetManager
 
 class Permissions:
@@ -53,22 +53,26 @@ class SpecificFilter:
 
             return perms | self.all_users
 
+        perms = Permissions.N
+
         if author.id == msg.guild.owner_id:
-            return proc(self.owner)
+            perms |= proc(self.owner)
 
         if author.guild_permissions.administrator:
-            return proc(self.admin)
+            perms |= proc(self.admin)
             
         if author.guild_permissions.manage_guild:
-            return proc(self.guild_manager)
+            perms |= proc(self.guild_manager)
 
         if self._is_bot_dev(author.id) and confirm_debug:
-            return proc(self.bot_dev)
+            perms |= proc(self.bot_dev)
 
         if self._is_whitelisted(author.id):
-            return proc(self.whitelist)
+            perms |= proc(self.whitelist)
 
-        return proc(self.others)
+        perms |= proc(self.others)
+
+        return perms
 
     def _is_bot_dev(self, uid: int) -> bool:
         return uid in AssetManager.config.Bot.Admins.Users

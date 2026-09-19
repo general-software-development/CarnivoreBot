@@ -2,6 +2,8 @@ import logging
 from datetime import datetime
 import colorama
 
+from sub.core.err.errors import BotError
+
 logging.getLogger("werkzeug").setLevel(logging.ERROR)
 
 SUCCESS = 25
@@ -41,11 +43,17 @@ class ColorFormatter(logging.Formatter):
         )
 
         if record.exc_info:
-            output += (
-                f"\n {colorama.Style.RESET_ALL}{colorama.Style.DIM}#{color}{colorama.Style.NORMAL} "
-                + self.formatException(record.exc_info)
-                    .replace('\n', f"\n {colorama.Style.RESET_ALL}{colorama.Style.DIM}#{color}{colorama.Style.NORMAL} ")
-            )
+            if not isinstance(record.exc_info[1], BotError):
+                output += (
+                    f"\n {colorama.Style.RESET_ALL}{colorama.Style.DIM}#{color}{colorama.Style.NORMAL} "
+                    + self.formatException(record.exc_info)
+                        .replace('\n', f"\n {colorama.Style.RESET_ALL}{colorama.Style.DIM}#{color}{colorama.Style.NORMAL} ")
+                )
+            else:
+                output += (
+                    f"\n {colorama.Style.RESET_ALL}{colorama.Style.DIM}#{colorama.Fore.RED} "
+                    + record.exc_info[1].to_log() + colorama.Style.RESET_ALL
+                )
 
         if record.stack_info:
             output += (

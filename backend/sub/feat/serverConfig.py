@@ -2,7 +2,7 @@ from datetime import timedelta
 from discord import Message
 from typing import Any
 
-from ..core.runtime.errors import BotError
+from ..core.err.errors import BotError
 from ..core.feat.featManager import start_feat, queuedFunctionAsync, detachAsync
 from ..core.dc import dcClient
 from sub.core.runtime.persistantDataManager import PersistentDataManager

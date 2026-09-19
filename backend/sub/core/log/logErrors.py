@@ -1,9 +1,10 @@
 from . import logManager
 
 class LogErrors:
-    def __init__(self, name: str = "Unknown", critical: bool = False) -> None:
+    def __init__(self, name: str = "Unknown", critical: bool = False, stack_info: bool = True) -> None:
         self.logger = logManager.getLogger(f"LogErrors: {name}")
         self.critical = critical
+        self.stack_info = stack_info
 
     def __enter__(self) -> None:
         return
@@ -14,8 +15,8 @@ class LogErrors:
                 raise exc_value
             except exc_type:
                 if self.critical:
-                    self.logger.critical(exc_value, exc_info = True, stack_info = True, stacklevel = 3)
+                    self.logger.critical(exc_value, exc_info = True, stack_info = self.stack_info, stacklevel = 3)
                 else:
-                    self.logger.error(exc_value, exc_info = True, stack_info = True, stacklevel = 3)
+                    self.logger.error(exc_value, exc_info = True, stack_info = self.stack_info, stacklevel = 3)
 
         return False

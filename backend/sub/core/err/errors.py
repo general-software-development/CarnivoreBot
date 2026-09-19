@@ -23,7 +23,7 @@ class BotError(Exception):
         super().__init__()
 
     def __str__(self):
-        return f"STATUS {self.status_code}\n{self.description}\n{self.details}"
+        return f"STATUS {self.status_code} | {self.description} | {self.details}"
 
     def to_dc(self):
         return f"{self.description}\n-# STATUS {self.status_code}"

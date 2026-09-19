@@ -9,14 +9,7 @@ from sub.core.starttime.assetManager import AssetManager
 from sub.core.starttime import config as configHandler
 configHandler.setConfig(AssetManager.config)
 
-from sub.feat import pingPong
-from sub.feat import checkIsSpam
-from sub.feat import getEnv
-from sub.feat import githubIssueMention
-from sub.feat.shellcmd import shellcmd
-from sub.feat import serverConfig
-from sub.feat import legal
-from sub.feat import gdpr
+from sub import feat
 
 from sub.core.starttime import mainThread
 
@@ -36,14 +29,15 @@ async def main():
     intents.message_content = True
     bot = discord.Client(intents = intents)
 
-    pingPong.InitialisePingPongCommand()
-    checkIsSpam.InitialiseCheckIsSpamCommand()
-    getEnv.InitialiseGetEnvCommand()
-    shellcmd.InitShellCmd()
-    githubIssueMention.InitialiseGithubIssueMention()
-    serverConfig.InitialiseServerConfigManager()
-    legal.InitialiseGetLegalDocument()
-    gdpr.InitialiseGDPRCommand()
+    feat.pingPong.InitialisePingPongCommand()
+    feat.checkIsSpam.InitialiseCheckIsSpamCommand()
+    feat.getEnv.InitialiseGetEnvCommand()
+    feat.shellcmd.InitShellCmd()
+    feat.githubIssueMention.InitialiseGithubIssueMention()
+    feat.serverConfig.InitialiseServerConfigManager()
+    feat.legal.InitialiseGetLegalDocument()
+    feat.gdpr.InitialiseGDPRCommand()
+    feat.admin.InitialiseAdminCommand()
 
     await startClient(bot, AssetManager.settings['Discord']['App']['Auth']['AuthToken'])
 
