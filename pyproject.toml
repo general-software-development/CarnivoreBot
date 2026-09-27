@@ -16,10 +16,11 @@ dependencies = [
     "pypandoc-binary>=1.17",
     "pytest>=9.1.1",
     "pytest-asyncio>=1.4.0",
-    "sqlalchemy>=2.0.52",
+    "sqlalchemy[asyncio]>=2.0.52",
     "torch>=2.13.0",
     "transformers>=5.0.0",
     "typeguard>=4.6.0",
+    "aiosqlite>=0.22.1",
 ]
 
 [tool.uv]

@@ -65,7 +65,7 @@ class AdminCommand(CommandABC):
 
         if action == '*':
             with PersistentDataManager() as db:
-                
+                ...
 
         return BotError("0 Success")
 
