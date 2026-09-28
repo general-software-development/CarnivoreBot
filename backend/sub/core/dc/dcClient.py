@@ -106,3 +106,11 @@ def registerHandler(event: Literal['onMessage'], handler: Callable[[discord.Mess
 def runDiscord(cr: Coroutine) -> aio.Future:
     global discordLoop
     return aio.wrap_future(aio.run_coroutine_threadsafe(cr, discordLoop))
+
+@fnTypes.public
+@typecheck_simple
+def runDiscordSync(fn: Callable) -> aio.Future:
+    global discordLoop
+    async def _internal_async():
+        return fn()
+    return aio.wrap_future(aio.run_coroutine_threadsafe(_internal_async(), discordLoop))

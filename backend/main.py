@@ -27,6 +27,8 @@ args = argParser.parse_args()
 async def main():
     intents = discord.Intents.default()
     intents.message_content = True
+    intents.messages = True
+    intents.guild_messages = True
     bot = discord.Client(intents = intents)
 
     feat.pingPong.InitialisePingPongCommand()

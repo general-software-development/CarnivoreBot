@@ -26,7 +26,7 @@ class AdminCommand(CommandABC):
 
     @queuedFunctionAsync()
     async def onRunCommand(self, message: discord.Message, cmd):
-        if len(cmd) >= 2 and cmd[1] in {"whitelist"}:
+        if len(cmd) >= 2 and cmd[1] in {"whitelist", "purge"}:
             with SuppressErrors(), LogErrors("admin_cmd", stack_info=False):
                 return await self._onRunActualCommand(message, cmd)
 
@@ -40,7 +40,7 @@ class AdminCommand(CommandABC):
             await dc.runDiscord(message.reply(err.to_dc()))
             raise err
 
-        await dc.runDiscord(message.reply(f"Usage: admin {{whitelist}}.\n-# Note: this is an admin-only command."))
+        await dc.runDiscord(message.reply(f"Usage: admin {{whitelist|purge}}.\n-# Note: this is an admin-only command."))
     
     async def _onRunActualCommand(self, message: discord.Message, cmd):
         err = self.filter.verify(message, Permissions.X, True)
@@ -57,6 +57,11 @@ class AdminCommand(CommandABC):
             case "whitelist":
                 ...
 
+            case "purge":
+                e = await self._purgeCommand(message, cmd)
+                if e:
+                    await dc.runDiscord(message.reply(e.to_dc()))
+
     async def _whitelistCommand(self, msg: discord.Message, cmd: list[str]) -> BotError:
         if len(cmd) != 3:
             await dc.runDiscord(msg.reply(f"Usage: `admin whitelist +<userid>` `admin whitelist -<userid>` `admin whitelist <userid>` `admin whitelist *`"))
@@ -68,6 +73,38 @@ class AdminCommand(CommandABC):
                 ...
 
         return BotError("0 Success")
+
+    async def _purgeCommand(self, msg: discord.Message, cmd: list[str]) -> BotError:
+        if len(cmd) != 3:
+            await dc.runDiscord(msg.reply(f"Usage: `admin purge <amount>`"))
+
+        i = 0
+        target = int(cmd[2])
+
+        class Finished(Exception):
+            ...
+
+        async def purge():
+            nonlocal i, target
+            try:
+                for dynamic_limit in {5, 10, 40, 60, 80, 100, 120, 180}:
+                    async for i2 in msg.channel.history(limit=dynamic_limit):
+                        if i2.author.id == dc.client.user.id:
+                            await dc.runDiscord(i2.delete())
+                            i += 1
+                            if i == target:
+                                raise Finished()
+
+                return BotError("-2 Unknown error", f"Only {i} messages from the bot were found.")
+            except Finished:
+                await dc.runDiscord(msg.reply(f"Successfully purged {i} messages.\n-# Queried {dynamic_limit} messages for this operation", delete_after=5))
+
+                return BotError("0 Success")
+            except Exception as e:
+                await self.logger.error(str(e), exc_info=e)
+                return BotError("-1 Internal Error", str(e))
+
+        return await dc.runDiscord(purge())
 
 def InitialiseAdminCommand():
     start_feat("AdminCommand", AdminCommand)
