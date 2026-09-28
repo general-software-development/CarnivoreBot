@@ -40,5 +40,5 @@ The available `<category>` values are: `server-settings`.
 
 ## CheckIsSpam Command
 
-> [!ERROR]
+> [!WARNING]
 > This command is currently not guaranteed to be functional and is not currently documented.
