@@ -28,3 +28,5 @@ uv run python -X gil=0 backend/main.py --tests
 For documentation on the internal functioning of the bot, do `python -m sc docs [-h] {subsystems,feat,abstract,core} [section]`.
 
 Run `python -m sc docs -h` for more details.
+
+To keep track of TODO's, code owners are to use the `improvements/impr.md` file, following the existing entries as examples.
