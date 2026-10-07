@@ -29,4 +29,4 @@ For documentation on the internal functioning of the bot, do `python -m sc docs 
 
 Run `python -m sc docs -h` for more details.
 
-To keep track of TODO's, code owners are to use the `improvements/impr.md` file, following the existing entries as examples.
+To keep track of TODO's, code owners are to use the [`improvements/impr.md`](./improvements/impr.md) file, following the existing entries as examples.
