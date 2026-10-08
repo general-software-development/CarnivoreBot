@@ -24,6 +24,9 @@ class GithubIssueMentionFeat:
         return await self._onRunCommand(message)
 
     async def _onRunCommand(self, message: Message) -> None:
+        if not message.guild:
+            return
+
         repo_name = await getServerSettingValue(message.guild.id, "gh.repo-name")
         repo_owner = await getServerSettingValue(message.guild.id, "gh.repo-owner")
 

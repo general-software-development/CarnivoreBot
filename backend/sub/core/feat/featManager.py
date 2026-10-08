@@ -53,8 +53,13 @@ def start_feat(name: str, target: type, daemon: bool = True) -> threading.Thread
         l = logManager.getLogger("featManagerWrapper")
         l.info("Initialising")
 
+
+        feat = None
         with SuppressErrors(), LogErrors(f"featManager:{name}", True):
             feat = target()
+
+        if feat is None:
+            return
 
         loop.create_task(feat.init())
 

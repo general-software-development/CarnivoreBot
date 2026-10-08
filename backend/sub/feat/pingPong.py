@@ -1,16 +1,17 @@
+import time
 from datetime import timedelta
-from discord import Message
 import math
 
+from discord import Message, Interaction
+import sqlalchemy as sqla
+
+from sub.core.err.panic import panic, PC
 from ..core.log.logErrors import LogErrors
 from ..core.runtime import rateLimitManager
 from ..core.feat.featManager import start_feat, queuedFunctionAsync, detachAsync
 from ..core.dc import dcClient
 from ..core.runtime.persistantDataManager import PersistentDataManager, APersistentDataManager
 from ..core.runtime.runtimeDataManager import readData
-from sub.core.err.panic import panic, PC
-import sqlalchemy as sqla
-import time
 
 async def arange(start_or_stop: int, stop: int | None = None):
     i = start_or_stop if stop is not None else 0
@@ -23,6 +24,7 @@ async def arange(start_or_stop: int, stop: int | None = None):
 class PingPongCommand:
     def __init__(self):
         dcClient.registerCommand("ping", self.onRunCommand)
+        dcClient.registerSlashCommand("ping", self.onRunCommand, defaults = dict(hide=False), hide = bool)
 
         self.first_connect = None
         self.first_read = None
@@ -33,10 +35,10 @@ class PingPongCommand:
 
     @queuedFunctionAsync()
     async def onRunCommand(self, message: Message, *_) -> None:
-        return await self._onRunCommand(message)
+        return await self._onRunCommand(message, *_)
 
-    async def _onRunCommand(self, message: Message) -> None:
-        userId = message.author.id
+    async def _onRunCommand(self, message: Message, cmd, interaction: Interaction | None = None) -> None:
+        userId = message.author.id if message else interaction.user.id
 
         with LogErrors('pingPong'):
             if (ratelimit := await rateLimitManager.getRateLimit(userId, "ping")) > timedelta():
@@ -114,7 +116,8 @@ class PingPongCommand:
         read_runtimedm_time = (sum(read_runtimedm_time) / len(read_runtimedm_time), ravg(read_runtimedm_time))
 
         await dcClient.runDiscord(
-            message.reply(
+            dcClient.reply(
+                message or interaction,
                 "Pong!\n"
                 f"PersistentDataManager First Connection: `{self.first_connect:.2f}µs`\n"
                 f"PersistentDataManager First Read: `{self.first_read:.2f}µs`\n\n"
@@ -122,7 +125,8 @@ class PingPongCommand:
                 f"PersistentDataManager Read: mean=`{db_read_avg[0]:.2f}µs` / custom-avg=`{db_read_avg[1]:.2f}µs`\n"
                 f"APersistentDataManager Connection: mean=`{adb_connect_avg[0]:.2f}µs` / custom-avg=`{adb_connect_avg[1]:.2f}µs`\n"
                 f"APersistentDataManager Read: mean=`{adb_read_avg[0]:.2f}µs` / custom-avg=`{adb_read_avg[1]:.2f}µs`\n\n"
-                f"RuntimeDataManager Read: mean=`{read_runtimedm_time[0]:.2f}ns` / custom-avg=`{read_runtimedm_time[1]:.2f}ns`"
+                f"RuntimeDataManager Read: mean=`{read_runtimedm_time[0]:.2f}ns` / custom-avg=`{read_runtimedm_time[1]:.2f}ns`",
+                ephemeral=cmd[1] if len(cmd) > 1 else False
             )
         )
 

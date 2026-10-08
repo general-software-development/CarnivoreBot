@@ -2,7 +2,7 @@
 
 - [ ] CB-1, Admin Privacy Notice Command
 - [ ] CB-2, Clean up the code
-- [ ] CB-3, Slash command support
+- [X] CB-3, Slash command support
 - [ ] CB-4, Log Command
 - [ ] CB-5, Output initialisation times
 - [ ] CB-6, Profiling Command
@@ -29,7 +29,7 @@ Assigned: @bogdan-glitchm
 
 Clean up code, unused import headers, and more.
 
-## CB-3 (Open) <!-- Slash Command Support -->
+## CB-3 (Done) <!-- Slash Command Support -->
 
 7th October 2026
 
