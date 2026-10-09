@@ -21,7 +21,7 @@ CB-2:
 
 CB-3:
   title: Slash Command Support
-  date: 7th October 2026
+  date: 7th October 2026 (Finished 8th October 2026)
   status: done
   author: bogdan-glitchm
   assignees:
@@ -49,8 +49,8 @@ CB-4:
 
 CB-5:
   title: Output initialisation times
-  date: 7th October 2026
-  status: open
+  date: 7th October 2026 (Finished 9th October 2026)
+  status: done
   author: bogdan-glitchm
   assignees:
     - bogdan-glitchm

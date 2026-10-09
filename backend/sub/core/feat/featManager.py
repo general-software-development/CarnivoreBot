@@ -9,6 +9,7 @@ from ..log.logErrors import LogErrors
 from ..log.suppressErrors import SuppressErrors
 import asyncio
 from threading import RLock
+import time
 
 logger = logManager.getLogger("featManager")
 
@@ -53,6 +54,7 @@ def start_feat(name: str, target: type, daemon: bool = True) -> threading.Thread
         l = logManager.getLogger("featManagerWrapper")
         l.info("Initialising")
 
+        start = time.perf_counter()
 
         feat = None
         with SuppressErrors(), LogErrors(f"featManager:{name}", True):
@@ -66,7 +68,9 @@ def start_feat(name: str, target: type, daemon: bool = True) -> threading.Thread
         with features_lock:
             features.append(feat)
 
-        l.success("Initialised")
+        dt = time.perf_counter() - start
+
+        l.success(f"Initialised in {round(dt * 1000, 1)} ms.")
 
         try:
             loop.run_forever()

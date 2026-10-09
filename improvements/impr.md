@@ -4,7 +4,7 @@
 - [ ] CB-2, Clean up the code
 - [X] CB-3, Slash command support
 - [ ] CB-4, Log Command
-- [ ] CB-5, Output initialisation times
+- [X] CB-5, Output initialisation times
 - [ ] CB-6, Profiling Command
 
 ## CB-1 (Open) <!-- Admin Privacy Notice Command -->
@@ -31,7 +31,7 @@ Clean up code, unused import headers, and more.
 
 ## CB-3 (Done) <!-- Slash Command Support -->
 
-7th October 2026
+7th October 2026 (Finished 8th October 2026)
 
 Author: @bogdan-glitchm
 
@@ -57,9 +57,9 @@ This may require storing logs in a `Queue` object to be consumed by the command.
 
 Permissions: bot-owner = `rwx`, whitelist = `rx` (does not delete log entries when read), default = `n`, others = `n`.
 
-## CB-5 (Open) <!-- Output initialisation times -->
+## CB-5 (Done) <!-- Output initialisation times -->
 
-7th October 2026
+7th October 2026 (Finished 9th October 2026)
 
 Author: @bogdan-glitchm
 

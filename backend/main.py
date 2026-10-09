@@ -4,6 +4,7 @@ import logging
 import argparse
 import pytest
 import discord
+import time
 
 from sub.core.starttime.assetManager import AssetManager
 from sub.core.starttime import config as configHandler
@@ -16,6 +17,7 @@ from sub.core.starttime import mainThread
 from sub.core.dc.dcClient import startClient
 
 from sub.core.log.logManager import ColorFormatter
+from sub.core.log.logManager import getLogger
 
 discord.utils.setup_logging(level=logging.INFO, root=False, formatter = ColorFormatter())
 
@@ -25,6 +27,7 @@ argParser.add_argument("--tests", action="store_true")
 args = argParser.parse_args()
 
 async def main():
+
     intents = discord.Intents.default()
     intents.message_content = True
     intents.messages = True
@@ -39,8 +42,8 @@ async def main():
     feat.serverConfig.InitialiseServerConfigManager()
     feat.legal.InitialiseGetLegalDocument()
     feat.gdpr.InitialiseGDPRCommand()
-    feat.admin.InitialiseAdminCommand()
-
+    feat.admin.InitialiseAdminCommand() 
+    
     await startClient(bot, AssetManager.settings['Discord']['App']['Auth']['AuthToken'])
 
     await asyncio.Event().wait()
