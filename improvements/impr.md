@@ -6,6 +6,7 @@
 - [ ] CB-4, Log Command
 - [X] CB-5, Output initialisation times
 - [ ] CB-6, Profiling Command
+- [ ] CB-7, GitHub Discussion Sync Feature
 
 ## CB-1 (Open) <!-- Admin Privacy Notice Command -->
 
@@ -80,3 +81,15 @@ Add a command to profile the bot when run.
 For Python 3.14 and earlier, add a "--profile" flag to enable profiling from program startup.
 
 For Python 3.15 and later, use `profiling.sampling` and start sample profiling after the command is run, returning the profiled times as soon as available.
+
+## CB-7 (Open) <!-- GitHub Discussion Sync Feature -->
+
+10th October 2026
+
+Author: @bogdan-glitchm
+
+Assigned: @bogdan-glitchm
+
+Add a feature to sync messages on GitHub Issues/PRs/Discussions with messages on a discord forum channel, and vice versa.
+
+Must allow different channels for each of these categories (Issue/PR/Discussion), as well as custom tags for them.

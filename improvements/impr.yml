@@ -69,3 +69,15 @@ CB-6:
     - For Python 3.14 and earlier, add a "--profile" flag to enable profiling from program startup.
     -
     - For Python 3.15 and later, use `profiling.sampling` and start sample profiling after the command is run, returning the profiled times as soon as available.
+
+CB-7:
+  title: GitHub Discussion Sync Feature
+  date: 10th October 2026
+  status: open
+  author: bogdan-glitchm
+  assignees:
+    - bogdan-glitchm
+  description:
+    - Add a feature to sync messages on GitHub Issues/PRs/Discussions with messages on a discord forum channel, and vice versa.
+    -
+    - Must allow different channels for each of these categories (Issue/PR/Discussion), as well as custom tags for them.
