@@ -14,7 +14,7 @@ from .serverConfig import getServerSettingValue
 class GithubIssueMentionFeat:
     def __init__(self):
         dcClient.registerCommand("", self.onRunCommand, False)
-        dcClient.registerSlashCommand("link-github", self.onRunSlashCommand, "Get details about a GitHub Issue/PR by ID", dict(hide = False), issue_id = int, hide = bool)
+        dcClient.registerSlashCommand("link-github", self.onRunSlashCommand, "Get details about a GitHub Issue/PR by ID", dict(hide = False), issue_id = str, hide = bool)
 
     async def init(self):
         #await rateLimitManager.createRateLimit("gh-issue-mention")
@@ -37,11 +37,19 @@ class GithubIssueMentionFeat:
         repo_name = await getServerSettingValue(interaction.guild_id, "gh.repo-name")
         repo_owner = await getServerSettingValue(interaction.guild_id, "gh.repo-owner")
 
+        if isinstance(issue_id, str) and "/" in issue_id and len(issue_id.split("/")) == 3:
+            repo_name = json.dumps(issue_id.split("/")[1])
+            repo_owner = json.dumps(issue_id.split("/")[0])
+            issue_id = issue_id.split("/")[2]
+        else:
+            repo_name = repo_name.value
+            repo_owner = repo_owner.value
+
         if not repo_name or not repo_owner:
             await dcClient.runDiscord(interaction.response.send_message("Looks like this command is not configured for this server. Please ask the server owner to set the `gh.repo-owner` and `gh.repo-name` values with the `;config.set` command.", ephemeral=hide))
             return
 
-        github_url = f"https://api.github.com/repos/{json.loads(repo_owner.value)}/{json.loads(repo_name.value)}/"
+        github_url = f"https://api.github.com/repos/{json.loads(repo_owner)}/{json.loads(repo_name)}/"
         
         issue_url = github_url + "issues/" + str(issue_id)
 
@@ -57,10 +65,17 @@ class GithubIssueMentionFeat:
 
         async with httpx.AsyncClient() as cl:
             response = await cl.get(issue_url)  
-            response.raise_for_status()
+            try:
+                response.raise_for_status()
+            except httpx.HTTPStatusError as e:
+                if e.response.status_code == 404:
+                    await interaction.response.send_message("(404) Not found.")
+                    return
+                else:
+                    raise ValueError(f"Unexpected status code {e.response.status_code}") from e
 
             data: dict = response.json()
-                        
+            
             issue_title = data['title']
             issue_body = data['body'] or ''
             is_pull_request = "pull_request" in data.keys()
